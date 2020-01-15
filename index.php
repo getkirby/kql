@@ -34,7 +34,6 @@ Kirby::plugin('getkirby/kql', [
             [
                 'pattern' => 'query',
                 'method' => 'POST|GET',
-                'auth'   => false,
                 'action' => function () {
 
                     $result = Kql::run([
