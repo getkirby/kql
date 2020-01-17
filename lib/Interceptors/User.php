@@ -21,6 +21,7 @@ class User extends Model
         return array_merge(
             $this->allowedMethodsForFiles(),
             $this->allowedMethodsForModels(),
+            $this->allowedMethodsForSiblings(),
             [
                 'avatar',
                 'email',

@@ -33,6 +33,7 @@ class Page extends Model
             $this->allowedMethodsForFiles(),
             $this->allowedMethodsForModels(),
             $this->allowedMethodsForParents(),
+            $this->allowedMethodsForSiblings(),
             [
                 'blueprints',
                 'depth',

@@ -80,6 +80,23 @@ class Model extends Interceptor
         ];
     }
 
+    protected function allowedMethodsForSiblings()
+    {
+        return [
+            'indexOf',
+            'next',
+            'nextAll',
+            'prev',
+            'prevAll',
+            'siblings',
+            'hasNext',
+            'hasPrev',
+            'isFirst',
+            'isLast',
+            'isNth'
+        ];
+    }
+
     protected function allowedMethodsForParents()
     {
         return [

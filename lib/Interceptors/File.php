@@ -25,6 +25,7 @@ class File extends Model
         return array_merge(
             $this->allowedMethodsForModels(),
             $this->allowedMethodsForParents(),
+            $this->allowedMethodsForSiblings(),
             [
                 'dataUri',
                 'dimensions',
