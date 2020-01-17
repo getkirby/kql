@@ -11,6 +11,7 @@ load([
     'kirby\kql\interceptors\content'         => __DIR__ . '/lib/Interceptors/Content.php',
     'kirby\kql\interceptors\field'           => __DIR__ . '/lib/Interceptors/Field.php',
     'kirby\kql\interceptors\file'            => __DIR__ . '/lib/Interceptors/File.php',
+    'kirby\kql\interceptors\fileversion'     => __DIR__ . '/lib/Interceptors/FileVersion.php',
     'kirby\kql\interceptors\files'           => __DIR__ . '/lib/Interceptors/Files.php',
     'kirby\kql\interceptors\interceptor'     => __DIR__ . '/lib/Interceptors/Interceptor.php',
     'kirby\kql\interceptors\model'           => __DIR__ . '/lib/Interceptors/Model.php',
