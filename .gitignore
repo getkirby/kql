@@ -24,3 +24,5 @@
 /vendor/**/tests/*
 /vendor/**/php4/*
 /vendor/getkirby/composer-installer
+/.php_cs.cache
+/.phpunit.result.cache
