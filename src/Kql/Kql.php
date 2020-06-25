@@ -2,7 +2,6 @@
 
 namespace Kirby\Kql;
 
-use Exception;
 use Kirby\Cms\Collection;
 use Kirby\Toolkit\Str;
 

@@ -61,5 +61,4 @@ abstract class Interceptor
     {
         return $this->toArray();
     }
-
 }

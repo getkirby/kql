@@ -40,5 +40,4 @@ class Field extends Interceptor
     {
         return $this->object->toString();
     }
-
 }
