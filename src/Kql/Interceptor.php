@@ -3,7 +3,6 @@
 namespace Kirby\Kql;
 
 use Exception;
-use Kirby\Toolkit\Str;
 
 class Interceptor
 {

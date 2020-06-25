@@ -6,7 +6,6 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Content extends Interceptor
 {
-
     const CLASS_ALIAS = 'content';
 
     public function __call($method, array $args = [])
