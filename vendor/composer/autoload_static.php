@@ -41,6 +41,7 @@ class ComposerStaticInitce81ad819bd8a4fdf01799db40d8b86b
         'Kirby\\Kql\\Interceptors\\Cms\\Pages' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/Pages.php',
         'Kirby\\Kql\\Interceptors\\Cms\\Role' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/Role.php',
         'Kirby\\Kql\\Interceptors\\Cms\\Site' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/Site.php',
+        'Kirby\\Kql\\Interceptors\\Cms\\Structure' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/Structure.php',
         'Kirby\\Kql\\Interceptors\\Cms\\StructureObject' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/StructureObject.php',
         'Kirby\\Kql\\Interceptors\\Cms\\User' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/User.php',
         'Kirby\\Kql\\Interceptors\\Cms\\Users' => __DIR__ . '/../..' . '/src/Kql/Interceptors/Cms/Users.php',
