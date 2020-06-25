@@ -9,24 +9,29 @@ class Interceptor
 {
     public static function replace($object)
     {
-        $className = get_class($object);
+        if (is_object($object) === false) {
+            throw new Exception('Unsupported value: ' . gettype($object));
+        }
 
-        if (Str::startsWith($className, 'Kirby\\Cms\\') === false) {
+        $className   = get_class($object);
+        $interceptor = str_replace('Kirby\\', 'Kirby\\Kql\\Interceptors\\', $className);
+
+        if (is_a($object, 'Kirby\\Kql\\Interceptors\\Interceptor') === true) {
             return $object;
         }
 
-        $interceptor = str_replace('Kirby\\Cms\\', 'Kirby\\Kql\\Interceptors\\', $className);
-
-        if (class_exists($interceptor) === true) {
+        if ($className !== $interceptor && class_exists($interceptor) === true) {
             return new $interceptor($object);
-        } elseif (is_a($object, 'Kirby\Cms\Collection') === true) {
-            return new Interceptors\Collection($object);
-        } elseif (is_a($object, 'Kirby\Cms\Page') === true) {
-            return new Interceptors\Page($object);
-        } elseif (is_a($object, 'Kirby\Cms\Blueprint') === true) {
-            return new Interceptors\Blueprint($object);
         }
 
-        throw new Exception('Unknown object: ' . $className);
+        foreach (class_parents($object) as $parent) {
+            $interceptor = str_replace('Kirby\\', 'Kirby\\Kql\\Interceptors\\', $parent);
+
+            if (class_exists($interceptor) === true) {
+                return new $interceptor($object);
+            }
+        }
+
+        throw new Exception('Unsupported object: ' . $className);
     }
 }

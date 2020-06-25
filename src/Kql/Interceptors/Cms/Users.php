@@ -1,6 +1,6 @@
 <?php
 
-namespace Kirby\Kql\Interceptors;
+namespace Kirby\Kql\Interceptors\Cms;
 
 class Users extends Collection
 {
