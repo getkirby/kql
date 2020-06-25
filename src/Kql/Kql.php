@@ -32,11 +32,7 @@ class Kql
             return $result;
         }
 
-        if (isset($input['query']) === false) {
-            throw new Exception('Please specify a query');
-        }
-
-        $query   = $input['query'];
+        $query   = $input['query'] ?? 'site';
         $select  = $input['select'] ?? null;
         $options = [
             'pagination' => $input['pagination'] ?? null,
@@ -89,20 +85,8 @@ class Kql
 
     public static function render($value)
     {
-        if (is_a($value, 'Kirby\Cms\Collection') === true) {
-            return $value->keys();
-        }
-
-        if (is_a($value, 'Kirby\Cms\Field') === true) {
-            return $value->toString();
-        }
-
-        if (is_a($value, 'Kirby\Cms\Template') === true) {
-            return $value->name();
-        }
-
         if (is_object($value) === true) {
-            return Interceptor::replace($value)->toArray();
+            return Interceptor::replace($value)->toResponse();
         }
 
         return $value;

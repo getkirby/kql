@@ -56,4 +56,10 @@ abstract class Interceptor
     {
         return Kql::select($this, $this->toArray);
     }
+
+    public function toResponse()
+    {
+        return $this->toArray();
+    }
+
 }

@@ -1,9 +1,13 @@
 <?php
 
-namespace Kirby\Kql\Interceptors;
+namespace Kirby\Kql\Interceptors\Cms;
+
+use Kirby\Kql\Interceptors\Interceptor;
 
 class Model extends Interceptor
 {
+    const CLASS_ALIAS = 'model';
+
     public function __call($method, array $args = [])
     {
         if ($this->isAllowedMethod($method) === true) {

@@ -1,6 +1,8 @@
 <?php
 
-namespace Kirby\Kql\Interceptors;
+namespace Kirby\Kql\Interceptors\Cms;
+
+use Kirby\Kql\Interceptors\Interceptor;
 
 class Blueprint extends Interceptor
 {

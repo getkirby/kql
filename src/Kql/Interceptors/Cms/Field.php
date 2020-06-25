@@ -1,6 +1,8 @@
 <?php
 
-namespace Kirby\Kql\Interceptors;
+namespace Kirby\Kql\Interceptors\Cms;
+
+use Kirby\Kql\Interceptors\Interceptor;
 
 class Field extends Interceptor
 {
@@ -33,4 +35,10 @@ class Field extends Interceptor
             'value'
         ];
     }
+
+    public function toResponse()
+    {
+        return $this->object->toString();
+    }
+
 }

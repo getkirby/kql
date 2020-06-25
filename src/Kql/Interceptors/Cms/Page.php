@@ -1,6 +1,6 @@
 <?php
 
-namespace Kirby\Kql\Interceptors;
+namespace Kirby\Kql\Interceptors\Cms;
 
 class Page extends Model
 {
@@ -8,6 +8,7 @@ class Page extends Model
 
     protected $toArray = [
         'children',
+        'content',
         'drafts',
         'files',
         'id',
