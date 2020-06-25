@@ -22,7 +22,7 @@ Query:
         "images": {
             "query": "page.images",
             "select": {
-                "url": true,
+                "url": true
             }
         }
     },
