@@ -25,6 +25,7 @@ return array(
     'Kirby\\Kql\\Interceptors\\Cms\\Pages' => $baseDir . '/src/Kql/Interceptors/Cms/Pages.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Role' => $baseDir . '/src/Kql/Interceptors/Cms/Role.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Site' => $baseDir . '/src/Kql/Interceptors/Cms/Site.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Structure' => $baseDir . '/src/Kql/Interceptors/Cms/Structure.php',
     'Kirby\\Kql\\Interceptors\\Cms\\StructureObject' => $baseDir . '/src/Kql/Interceptors/Cms/StructureObject.php',
     'Kirby\\Kql\\Interceptors\\Cms\\User' => $baseDir . '/src/Kql/Interceptors/Cms/User.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Users' => $baseDir . '/src/Kql/Interceptors/Cms/Users.php',
