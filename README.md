@@ -503,8 +503,160 @@ Result:
 }
 ```
 
+### Pagination
 
+Whenever you query a collection (pages, files, users, roles, languages) you can limit the resultset and also paginate through entries. You've probably already seen the pagination object in the results above. It is included in all results for collections, even if you didn't specify any pagination settings. 
 
+#### `limit`
+
+You can specify a custom limit with the limit option. The default limit for collections is 100 entries. 
+
+```js
+const response = await axios.post(api, {
+  query: "page('notes').children",
+  limit: 5,
+  select: {
+    title: "page.title"
+  }
+}, { auth });
+```
+
+Result:
+
+```js
+{
+  code: 200,
+  result: {
+    data: [
+      {
+        title: "Across the ocean"
+      },
+      {
+        title: "A night in the forest"
+      },
+      {
+        title: "In the jungle of Sumatra"
+      },
+      {
+        title: "Through the desert"
+      },
+      {
+        title: "Himalaya and back"
+      }
+    ],
+    pagination: {
+      page: 1,
+      pages: 2,
+      offset: 0,
+      limit: 5,
+      total: 7
+    }
+  },
+  status: "ok"
+}
+```
+
+#### `page`
+
+You can jump to any page in the resultset with the `page` option.
+
+```js
+const response = await axios.post(api, {
+  query: "page('notes').children",
+  page: 2,
+  limit: 5,
+  select: {
+    title: "page.title"
+  }
+}, { auth });
+```
+
+Result:
+
+```js
+{
+  code: 200,
+  result: {
+    data: [
+      {
+        title: "Chasing waterfalls"
+      },
+      {
+        title: "Exploring the universe"
+      }
+    ],
+    pagination: {
+      page: 2,
+      pages: 2,
+      offset: 5,
+      limit: 5,
+      total: 7
+    }
+  },
+  status: "ok"
+}
+```
+
+### Pagination in subqueries
+
+Pagination settings also work for subqueries. 
+
+```js
+const response = await axios.post(api, {
+  query: "page('photography').children",
+  select: {
+    title: "page.title",
+    images: {
+      query: "page.images",
+      page: 2,
+      limit: 5,
+      select: {
+        filename: true      
+      }
+    }
+  }
+}, { auth });
+```
+
+### Multiple queries in a single call
+
+With the power of selects and subqueries you can basically query the entire site in a single request
+
+```js
+const response = await axios.post(api, {
+  query: "site",
+  select: {
+    title: "site.title",
+    url: "site.url",
+    notes: {
+      query: "page('notes').children.listed",
+      select: {
+        title: true,
+        url: true,
+        date: "page.date.toDate('d.m.Y')"
+        text: "page.text.kirbytext"
+      }       
+    },
+    photography: {
+      query: "page('photography').children.listed",
+      select: {
+        title: true,
+        images: {
+          query: "page.images",
+          select: {
+             url: true,
+             alt: true,
+             caption: "file.caption.kirbytext"
+          }
+        }
+      }
+    },
+    about: {
+      text: "page.text.kirbytext"
+    }
+  }
+}, { auth });
+```
 
 ## Credits
 
