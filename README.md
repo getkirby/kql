@@ -10,7 +10,7 @@ The Kirby QL API takes POST requests with standard JSON objects and returns high
 
 ## Example
 
-Query:
+POST: /api/query
 
 ```json
 {
@@ -32,7 +32,7 @@ Query:
 }
 ```
 
-Result:
+Response:
 
 ```json
 {
@@ -84,6 +84,116 @@ composer require getkirby/kql
 ```
 
 ## Documentation
+
+### API Endpoint
+
+KQL adds a new `query` API endpoint to your Kirby API. (i.e. https://yoursite.com/api/query) The endpoint requires authentication: https://getkirby.com/docs/guide/api/authentication
+
+### Sending POST requests
+
+You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [axios](https://github.com/axios/axios) and Javascript to get data from our Kirby installation. 
+
+```js
+const axios = require("axios")
+
+const api = "https://yoursite.com/api/query";
+const username = "apiuser";
+const password = "secret-api-password";
+
+const response = await axios.post(api, {
+    query: 'page("blog").children',
+    select: {
+        title: true,
+        text: 'page.text.kirbytext',
+        slug: true,
+        date: 'page.date.toDate("d.m.Y")'
+    }
+}, {
+  auth: {
+    username: username,
+    password: password
+  }
+});
+
+console.log(response);
+```
+
+### `query`
+
+With the query, you can fetch data from anywhere in your Kirby site. You can query fields, pages, files, users, languages, roles and more. 
+
+#### Queries without selects
+
+When you don't pass the select option, Kirby will try to come up with the most useful result set for you. This is great for simple queries.
+
+##### Fetching the site title
+```js
+const response = await axios.post(api, {
+    query: 'site.title',
+    auth: { ... }
+});
+
+console.log(response.data);
+```
+
+Result: 
+
+```js
+{
+  code: 200,
+  result: "Kirby Starterkit",
+  status: "ok"
+}
+```
+
+##### Fetching a list of page ids
+```js
+const response = await axios.post(api, {
+    query: 'site.children',
+    auth: { ... }
+});
+
+console.log(response.data);
+```
+
+Result: 
+
+```js
+{
+  code: 200,
+  result: [
+    "photography",
+    "notes",
+    "about",
+    "error",
+    "home"      
+  ],
+  status: "ok"
+}
+```
+
+#### Running field methods
+
+Queries can even execute field methods. 
+
+```js
+const response = await axios.post(api, {
+    query: 'site.title.toUpper',
+    auth: { ... }
+});
+
+console.log(response.data);
+```
+
+Result: 
+
+```js
+{
+  code: 200,
+  result: "KIRBY STARTERKIT",
+  status: "ok"
+}
+```
 
 ## Credits
 
