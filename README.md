@@ -4,9 +4,9 @@ Kirby's Query Language API combines the flexibility of Kirby's data structures, 
 
 The Kirby QL API takes POST requests with standard JSON objects and returns highly customized results that fit your application.
 
-## Alpha
+## Beta
 
-**This plugin is still in an experimental state. Please don't use it in production yet.**
+**This plugin is still in beta. It has been used in a bunch of projects already, but there's still potential for issues.**
 
 ## Example
 
@@ -657,6 +657,10 @@ const response = await axios.post(api, {
   }
 }, { auth });
 ```
+
+### No mutations
+
+KQL only offers access to data in your site. It does not support any mutations. All destructive methods are blocked and cannot be accessed in queries. 
 
 ## Credits
 
