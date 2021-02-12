@@ -4,10 +4,6 @@ Kirby's Query Language API combines the flexibility of Kirby's data structures, 
 
 The Kirby QL API takes POST requests with standard JSON objects and returns highly customized results that fit your application.
 
-## Beta
-
-**This plugin is still in beta. It has been used in a bunch of projects already, but there's still potential for issues.**
-
 ## Example
 
 POST: /api/query
@@ -91,7 +87,7 @@ KQL adds a new `query` API endpoint to your Kirby API. (i.e. https://yoursite.co
 
 ### Sending POST requests
 
-You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [axios](https://github.com/axios/axios) and Javascript to get data from our Kirby installation. 
+You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [axios](https://github.com/axios/axios) and Javascript to get data from our Kirby installation.
 
 ```js
 const axios = require("axios")
@@ -117,7 +113,7 @@ console.log(response);
 
 ### `query`
 
-With the query, you can fetch data from anywhere in your Kirby site. You can query fields, pages, files, users, languages, roles and more. 
+With the query, you can fetch data from anywhere in your Kirby site. You can query fields, pages, files, users, languages, roles and more.
 
 #### Queries without selects
 
@@ -132,7 +128,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -151,7 +147,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -161,7 +157,7 @@ Result:
     "notes",
     "about",
     "error",
-    "home"      
+    "home"
   ],
   status: "ok"
 }
@@ -169,7 +165,7 @@ Result:
 
 #### Running field methods
 
-Queries can even execute field methods. 
+Queries can even execute field methods.
 
 ```js
 const response = await axios.post(api, {
@@ -179,7 +175,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -191,7 +187,7 @@ Result:
 
 ### `select`
 
-KQL becomes really powerful by its flexible way to control the result set with the select option. 
+KQL becomes really powerful by its flexible way to control the result set with the select option.
 
 #### Select single properties and fields
 
@@ -206,7 +202,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -246,7 +242,7 @@ Result:
 }
 ```
 
-You can also use the object notation and pass true for each key/property you want to include. 
+You can also use the object notation and pass true for each key/property you want to include.
 
 ```js
 const response = await axios.post(api, {
@@ -260,7 +256,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -296,7 +292,7 @@ Result:
 
 #### Using queries for properties and fields
 
-Instead of passing true, you can also pass a string query to specify what you want to return for each key in your select object. 
+Instead of passing true, you can also pass a string query to specify what you want to return for each key in your select object.
 
 ```js
 const response = await axios.post(api, {
@@ -309,7 +305,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -342,7 +338,7 @@ const response = await axios.post(api, {
 console.log(response.data);
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -365,7 +361,7 @@ Result:
 
 #### Creating aliases
 
-String queries are a perfect way to create aliases or return variations of the same field or property multiple times. 
+String queries are a perfect way to create aliases or return variations of the same field or property multiple times.
 
 ```js
 const response = await axios.post(api, {
@@ -381,7 +377,7 @@ const response = await axios.post(api, {
 }, { auth });
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -394,7 +390,7 @@ Result:
         lowerCaseTitle: "explore the universe",
         guid: "notes/explore-the-universe",
         date: "21.04.2018",
-        timestamp: 1524316200        
+        timestamp: 1524316200
       },
       { ... },
       { ... },
@@ -420,7 +416,7 @@ const response = await axios.post(api, {
 }, { auth });
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -434,7 +430,7 @@ Result:
           "photography/trees/last-tree-standing.jpg",
           "photography/trees/monster-trees-in-the-fog.jpg",
           "photography/trees/sharewood-forest.jpg",
-          "photography/trees/stay-in-the-car.jpg"         
+          "photography/trees/stay-in-the-car.jpg"
         ]
       },
       { ... },
@@ -459,14 +455,14 @@ const response = await axios.post(api, {
     images: {
       query: "page.images",
       select: {
-        filename: true      
+        filename: true
       }
     }
   }
 }, { auth });
 ```
 
-Result: 
+Result:
 
 ```js
 {
@@ -475,8 +471,8 @@ Result:
     data: [
       {
         title: "Trees",
-        images: { 
-          { 
+        images: {
+          {
             filename: "cheesy-autumn.jpg"
           },
           {
@@ -489,7 +485,7 @@ Result:
             filename: "sharewood-forest.jpg"
           },
           {
-            filename: "stay-in-the-car.jpg"         
+            filename: "stay-in-the-car.jpg"
           }
         }
       },
@@ -505,11 +501,11 @@ Result:
 
 ### Pagination
 
-Whenever you query a collection (pages, files, users, roles, languages) you can limit the resultset and also paginate through entries. You've probably already seen the pagination object in the results above. It is included in all results for collections, even if you didn't specify any pagination settings. 
+Whenever you query a collection (pages, files, users, roles, languages) you can limit the resultset and also paginate through entries. You've probably already seen the pagination object in the results above. It is included in all results for collections, even if you didn't specify any pagination settings.
 
 #### `limit`
 
-You can specify a custom limit with the limit option. The default limit for collections is 100 entries. 
+You can specify a custom limit with the limit option. The default limit for collections is 100 entries.
 
 ```js
 const response = await axios.post(api, {
@@ -599,7 +595,7 @@ Result:
 
 ### Pagination in subqueries
 
-Pagination settings also work for subqueries. 
+Pagination settings also work for subqueries.
 
 ```js
 const response = await axios.post(api, {
@@ -611,7 +607,7 @@ const response = await axios.post(api, {
       page: 2,
       limit: 5,
       select: {
-        filename: true      
+        filename: true
       }
     }
   }
@@ -635,7 +631,7 @@ const response = await axios.post(api, {
         url: true,
         date: "page.date.toDate('d.m.Y')"
         text: "page.text.kirbytext"
-      }       
+      }
     },
     photography: {
       query: "page('photography').children.listed",
@@ -660,7 +656,7 @@ const response = await axios.post(api, {
 
 ### No mutations
 
-KQL only offers access to data in your site. It does not support any mutations. All destructive methods are blocked and cannot be accessed in queries. 
+KQL only offers access to data in your site. It does not support any mutations. All destructive methods are blocked and cannot be accessed in queries.
 
 ## Credits
 
