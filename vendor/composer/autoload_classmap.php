@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Kirby\\ComposerInstaller\\CmsInstaller' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
     'Kirby\\ComposerInstaller\\Installer' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
     'Kirby\\ComposerInstaller\\Plugin' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',
@@ -13,6 +14,8 @@ return array(
     'Kirby\\Kql\\Help' => $baseDir . '/src/Kql/Help.php',
     'Kirby\\Kql\\Interceptor' => $baseDir . '/src/Kql/Interceptor.php',
     'Kirby\\Kql\\Interceptors\\Cms\\App' => $baseDir . '/src/Kql/Interceptors/Cms/App.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Block' => $baseDir . '/src/Kql/Interceptors/Cms/Block.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Blocks' => $baseDir . '/src/Kql/Interceptors/Cms/Blocks.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Blueprint' => $baseDir . '/src/Kql/Interceptors/Cms/Blueprint.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Collection' => $baseDir . '/src/Kql/Interceptors/Cms/Collection.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Content' => $baseDir . '/src/Kql/Interceptors/Cms/Content.php',
@@ -20,6 +23,10 @@ return array(
     'Kirby\\Kql\\Interceptors\\Cms\\File' => $baseDir . '/src/Kql/Interceptors/Cms/File.php',
     'Kirby\\Kql\\Interceptors\\Cms\\FileVersion' => $baseDir . '/src/Kql/Interceptors/Cms/FileVersion.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Files' => $baseDir . '/src/Kql/Interceptors/Cms/Files.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Layout' => $baseDir . '/src/Kql/Interceptors/Cms/Layout.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\LayoutColumn' => $baseDir . '/src/Kql/Interceptors/Cms/LayoutColumn.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\LayoutColumns' => $baseDir . '/src/Kql/Interceptors/Cms/LayoutColumns.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Layouts' => $baseDir . '/src/Kql/Interceptors/Cms/Layouts.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Model' => $baseDir . '/src/Kql/Interceptors/Cms/Model.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Page' => $baseDir . '/src/Kql/Interceptors/Cms/Page.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Pages' => $baseDir . '/src/Kql/Interceptors/Cms/Pages.php',
@@ -27,9 +34,11 @@ return array(
     'Kirby\\Kql\\Interceptors\\Cms\\Site' => $baseDir . '/src/Kql/Interceptors/Cms/Site.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Structure' => $baseDir . '/src/Kql/Interceptors/Cms/Structure.php',
     'Kirby\\Kql\\Interceptors\\Cms\\StructureObject' => $baseDir . '/src/Kql/Interceptors/Cms/StructureObject.php',
+    'Kirby\\Kql\\Interceptors\\Cms\\Translation' => $baseDir . '/src/Kql/Interceptors/Cms/Translation.php',
     'Kirby\\Kql\\Interceptors\\Cms\\User' => $baseDir . '/src/Kql/Interceptors/Cms/User.php',
     'Kirby\\Kql\\Interceptors\\Cms\\Users' => $baseDir . '/src/Kql/Interceptors/Cms/Users.php',
     'Kirby\\Kql\\Interceptors\\Interceptor' => $baseDir . '/src/Kql/Interceptors/Interceptor.php',
+    'Kirby\\Kql\\Interceptors\\Toolkit\\Obj' => $baseDir . '/src/Kql/Interceptors/Toolkit/Obj.php',
     'Kirby\\Kql\\Kql' => $baseDir . '/src/Kql/Kql.php',
     'Kirby\\Kql\\Query' => $baseDir . '/src/Kql/Query.php',
 );

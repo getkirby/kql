@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "getkirby/composer-installer": "^1.1"
+        "getkirby/composer-installer": "^1.2.0"
     },
     "config": {
         "optimize-autoloader": true
@@ -23,7 +23,6 @@
         }
     },
     "scripts": {
-        "analyze": "phpstan analyse",
         "fix": "php-cs-fixer fix --config .php_cs"
     }
 }
