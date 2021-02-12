@@ -32,6 +32,13 @@ class KqlTest extends TestCase
         ]);
     }
 
+    public function testForbiddenMethod()
+    {
+        $this->expectException("Kirby\Exception\PermissionException");
+        $this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
+        $result = Kql::run('site.children.first.delete');
+    }
+
     public function testRun()
     {
         $result   = Kql::run('site.title');

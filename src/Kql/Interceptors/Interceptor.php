@@ -2,7 +2,7 @@
 
 namespace Kirby\Kql\Interceptors;
 
-use Exception;
+use Kirby\Exception\PermissionException;
 use Kirby\Kql\Help;
 use Kirby\Kql\Kql;
 
@@ -35,7 +35,7 @@ abstract class Interceptor
     protected function forbiddenMethod(string $method)
     {
         $className = get_class($this->object);
-        throw new Exception('The method "' . $className . '::' . $method . '()" is not allowed in the API context');
+        throw new PermissionException('The method "' . $className . '::' . $method . '()" is not allowed in the API context');
     }
 
     protected function isAllowedMethod($method)
