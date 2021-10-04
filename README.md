@@ -510,7 +510,9 @@ You can specify a custom limit with the limit option. The default limit for coll
 ```js
 const response = await axios.post(api, {
   query: "page('notes').children",
-  limit: 5,
+  pagination: {
+    limit: 5,  
+  },
   select: {
     title: "page.title"
   }
@@ -559,8 +561,10 @@ You can jump to any page in the resultset with the `page` option.
 ```js
 const response = await axios.post(api, {
   query: "page('notes').children",
-  page: 2,
-  limit: 5,
+  pagination: {
+    page: 2,
+    limit: 5
+  },
   select: {
     title: "page.title"
   }
@@ -604,8 +608,10 @@ const response = await axios.post(api, {
     title: "page.title",
     images: {
       query: "page.images",
-      page: 2,
-      limit: 5,
+      pagination: {              
+        page: 2,
+        limit: 5
+      }
       select: {
         filename: true
       }
