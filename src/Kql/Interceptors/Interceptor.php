@@ -13,7 +13,7 @@ use Throwable;
 
 abstract class Interceptor
 {
-    const CLASS_ALIAS = null;
+    public const CLASS_ALIAS = null;
 
     protected $object;
     protected $toArray = [];
@@ -71,7 +71,7 @@ abstract class Interceptor
         try {
             if (is_a($method, 'Closure') === true) {
                 $ref = new ReflectionFunction($method);
-            } else if (is_string($method) === true) {
+            } elseif (is_string($method) === true) {
                 $ref = new ReflectionMethod($this->object, $method);
             } else {
                 throw new Exception('Invalid method');

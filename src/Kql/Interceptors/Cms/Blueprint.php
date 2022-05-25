@@ -6,7 +6,7 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Blueprint extends Interceptor
 {
-    const CLASS_ALIAS = 'blueprint';
+    public const CLASS_ALIAS = 'blueprint';
 
     protected $toArray = [
         'description',

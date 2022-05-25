@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class Users extends Collection
 {
-    const CLASS_ALIAS = 'users';
+    public const CLASS_ALIAS = 'users';
 
     public function allowedMethods(): array
     {

@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class Block extends Model
 {
-    const CLASS_ALIAS = 'block';
+    public const CLASS_ALIAS = 'block';
 
     protected $toArray = [
         'content',

@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class User extends Model
 {
-    const CLASS_ALIAS = 'user';
+    public const CLASS_ALIAS = 'user';
 
     protected $toArray = [
         'id',

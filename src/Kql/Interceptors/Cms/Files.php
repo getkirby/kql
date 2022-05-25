@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class Files extends Collection
 {
-    const CLASS_ALIAS = 'files';
+    public const CLASS_ALIAS = 'files';
 
     public function allowedMethods(): array
     {

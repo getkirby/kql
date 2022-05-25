@@ -6,7 +6,7 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Collection extends Interceptor
 {
-    const CLASS_ALIAS = 'collection';
+    public const CLASS_ALIAS = 'collection';
 
     public function allowedMethods(): array
     {

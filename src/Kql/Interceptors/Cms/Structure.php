@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class Structure extends Collection
 {
-    const CLASS_ALIAS = 'structure';
+    public const CLASS_ALIAS = 'structure';
 
     public function toArray(): array
     {

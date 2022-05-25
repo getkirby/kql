@@ -6,7 +6,7 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Obj extends Interceptor
 {
-    const CLASS_ALIAS = 'obj';
+    public const CLASS_ALIAS = 'obj';
 
     public function allowedMethods(): array
     {

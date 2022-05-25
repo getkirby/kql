@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 class Site extends Model
 {
-    const CLASS_ALIAS = 'site';
+    public const CLASS_ALIAS = 'site';
 
     protected $toArray = [
         'children',

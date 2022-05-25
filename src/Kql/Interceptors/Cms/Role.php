@@ -6,7 +6,7 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Role extends Interceptor
 {
-    const CLASS_ALIAS = 'role';
+    public const CLASS_ALIAS = 'role';
 
     protected $toArray = [
         'description',

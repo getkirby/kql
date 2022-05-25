@@ -6,7 +6,7 @@ use Kirby\Kql\Interceptors\Interceptor;
 
 class Translation extends Interceptor
 {
-    const CLASS_ALIAS = 'translation';
+    public const CLASS_ALIAS = 'translation';
 
     protected $toArray = [
         'code',
