@@ -692,7 +692,7 @@ return [
 ];
 ```
 
-### DocBlock comment
+#### DocBlock comment
 
 You can also add a comment to your methods' doc blocks to allow them:
 
