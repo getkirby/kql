@@ -676,7 +676,7 @@ const response = await axios.post(api, {
 }, { auth });
 ```
 
-### Allowed methods
+### Allowing methods
 
 KQL is very strict with allowed methods by default. Custom page methods, file methods or model methods are not allowed to make sure you don't miss an important security issue by accident. You can allow additional methods though.
 
@@ -730,6 +730,24 @@ Kirby::plugin('your-name/your-plugin', [
 ]);
 ```
 
+### Blocking methods
+
+You can block individual class methods that would normally be accessible by listing them in your config:
+
+```php
+<?php
+
+return [
+  'kql' => [
+    'methods' => [
+      'blocked' => [
+        'Kirby\Cms\Page::url'
+      ]
+    ]
+  ]
+];
+```
+
 ### Blocking classes
 
 Sometimes you might want to reduce access to various parts of the system. This can be done by blocking individual methods (see above) or by blocking entire classes.
@@ -773,18 +791,18 @@ You can put the class for such a custom interceptor in a plugin for example.
 
 class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 {
-	public const CLASS_ALIAS = 'system';
+  public const CLASS_ALIAS = 'system';
 
-	protected $toArray = [
-		'isInstallable',
-	];
+  protected $toArray = [
+    'isInstallable',
+  ];
 
-	public function allowedMethods(): array
-	{
-		return [
-			'isInstallable',
-		];
-	}
+  public function allowedMethods(): array
+  {
+    return [
+      'isInstallable',
+    ];
+  }
 }
 ```
 
