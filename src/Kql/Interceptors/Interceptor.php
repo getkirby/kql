@@ -91,14 +91,22 @@ abstract class Interceptor
 
     protected function isAllowedMethod($method)
     {
+        $fullName = strtolower(get_class($this->object) . '::' . $method);
+        $blocked  = array_map('strtolower', option('kql.methods.blocked', []));
+
+        // check in the block list from the config
+        if (in_array($fullName, $blocked) === true) {
+            return false;
+        }
+
+        // check in class allow list
         if (in_array($method, $this->allowedMethods()) === true) {
             return true;
         }
 
-        $fullName = strtolower(get_class($this->object) . '::' . $method);
-        $allowed  = array_map('strtolower', option('kql.allowed', []));
+        $allowed = array_map('strtolower', option('kql.methods.allowed', []));
 
-        // check in allow list
+        // check in the allow list from the config
         if (in_array($fullName, $allowed) === true) {
             return true;
         }
@@ -147,7 +155,16 @@ abstract class Interceptor
 
     public function toArray(): ?array
     {
-        return Kql::select($this, $this->toArray);
+        $toArray = [];
+
+        // filter methods which cannot be called
+        foreach ($this->toArray as $method) {
+            if ($this->isAllowedMethod($method) === true) {
+                $toArray[] = $method;
+            }
+        }
+
+        return Kql::select($this, $toArray);
     }
 
     public function toResponse()

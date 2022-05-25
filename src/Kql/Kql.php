@@ -2,6 +2,7 @@
 
 namespace Kirby\Kql;
 
+use Exception;
 use Kirby\Cms\Collection;
 use Kirby\Toolkit\Str;
 
@@ -88,7 +89,17 @@ class Kql
     public static function render($value)
     {
         if (is_object($value) === true) {
-            return Interceptor::replace($value)->toResponse();
+            $object = Interceptor::replace($value);
+
+            if (method_exists($object, 'toResponse') === true) {
+                return $object->toResponse();
+            }
+
+            if (method_exists($object, 'toArray') === true) {
+                return $object->toArray();
+            }
+
+            throw new Exception('The object "' . get_class($object) . '" cannot be rendered. Try querying one of its methods instead.');
         }
 
         return $value;
