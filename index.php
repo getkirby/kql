@@ -16,14 +16,7 @@ Kirby::plugin('getkirby/kql', [
                 'pattern' => 'query',
                 'method' => 'POST|GET',
                 'action' => function () {
-                    $result = Kql::run([
-                        'query'      => get('query'),
-                        'select'     => get('select'),
-                        'pagination' => [
-                            'page'  => get('page', 1),
-                            'limit' => get('limit', 100)
-                        ]
-                    ]);
+                    $result = Kql::run(get());
 
                     return [
                         'code'   => 200,
