@@ -85,6 +85,18 @@ composer require getkirby/kql
 
 KQL adds a new `query` API endpoint to your Kirby API. (i.e. https://yoursite.com/api/query) The endpoint requires authentication: https://getkirby.com/docs/guide/api/authentication
 
+You can switch off authentication in your config at your own risk:
+
+```php
+<?php
+
+return [
+  'kql' => [
+    'auth' => false
+  ]
+];
+```
+
 ### Sending POST requests
 
 You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [axios](https://github.com/axios/axios) and Javascript to get data from our Kirby installation.
@@ -511,7 +523,7 @@ You can specify a custom limit with the limit option. The default limit for coll
 const response = await axios.post(api, {
   query: "page('notes').children",
   pagination: {
-    limit: 5,  
+    limit: 5,
   },
   select: {
     title: "page.title"
@@ -608,7 +620,7 @@ const response = await axios.post(api, {
     title: "page.title",
     images: {
       query: "page.images",
-      pagination: {              
+      pagination: {
         page: 2,
         limit: 5
       }
@@ -658,6 +670,58 @@ const response = await axios.post(api, {
     }
   }
 }, { auth });
+```
+
+### Allowed methods
+
+KQL is very strict with allowed methods by default. Custom page methods, file methods or model methods are not allowed to make sure you don't miss an important security issue by accident. You can allow additional methods though.
+
+#### Allow list
+
+The most straight forward way is to define allowed methods in your config.
+
+```php
+<?php
+
+return [
+  'kql' => [
+    'allowed' => [
+      'MyCustomPage::cover'
+    ]
+  ]
+];
+```
+
+### DocBlock comment
+
+You can also add a comment to your methods' doc blocks to allow them:
+
+```php
+class MyCustomPage extends Page
+{
+  /**
+   * @kql-allowed
+   */
+  public function cover()
+  {
+    return $this->images()->findBy('name', 'cover') ?? $this->image();
+  }
+}
+```
+
+This works for model methods as well as for custom page methods, file methods or other methods defined in plugins.
+
+```php
+Kirby::plugin('your-name/your-plugin', [
+  'pageMethods' => [
+    /**
+     * @kql-allowed
+     */
+    'cover' => function () {
+      return $this->images()->findBy('name', 'cover') ?? $this->image();
+    }
+  ]
+]);
 ```
 
 ### No mutations
