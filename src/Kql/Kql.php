@@ -65,15 +65,18 @@ class Kql
         $model = $model ?? $site;
 
         $query = new Query($query, [
-            'kirby' => $kirby,
-            'file'  => function ($id) use ($kirby) {
+            'collection' => function (string $id) use ($kirby) {
+                return $kirby->collection($id);
+            },
+            'file'  => function (string $id) use ($kirby) {
                 return $kirby->file($id);
             },
-            'page'  => function ($id) use ($site) {
+            'kirby' => $kirby,
+            'page'  => function (string $id) use ($site) {
                 return $site->find($id);
             },
             'site'  => $site,
-            'user'  => function ($id = null) use ($kirby) {
+            'user'  => function (string $id = null) use ($kirby) {
                 return $kirby->user($id);
             },
             $model::CLASS_ALIAS => $model
