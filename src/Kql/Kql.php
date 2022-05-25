@@ -38,6 +38,11 @@ class Kql
             'pagination' => $input['pagination'] ?? null,
         ];
 
+        // check for invalid queries
+        if (is_string($query) === false) {
+            throw new Exception('The query must be a string');
+        }
+
         $result = static::query($query, $model);
 
         return static::select($result, $select, $options);
@@ -59,7 +64,7 @@ class Kql
         return static::run($selection, $model);
     }
 
-    public static function query($query, $model = null)
+    public static function query(string $query, $model = null)
     {
         $kirby = kirby();
         $site  = $kirby->site();
