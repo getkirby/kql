@@ -8,7 +8,15 @@ ini_set('display_startup_errors', 'on');
 
 require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 
+// regular setup
 $bootstrapper = dirname(__DIR__, 4) . '/kirby/bootstrap.php';
+
+if (is_file($bootstrapper)) {
+    require_once $bootstrapper;
+}
+
+// sandbox
+$bootstrapper = dirname(__DIR__, 5) . '/kirby/bootstrap.php';
 
 if (is_file($bootstrapper)) {
     require_once $bootstrapper;
