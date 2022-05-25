@@ -4,6 +4,10 @@ Kirby's Query Language API combines the flexibility of Kirby's data structures, 
 
 The Kirby QL API takes POST requests with standard JSON objects and returns highly customized results that fit your application.
 
+## Demo
+
+You can play in our KQL sandbox here: https://kql.getkirby.com The sandbox is based on the Kirby starterkit.
+
 ## Example
 
 POST: /api/query
