@@ -14,10 +14,19 @@ class Field extends Interceptor
             return $this->object->$method(...$args);
         }
 
+        // field methods
         $methods = array_keys($this->object::$methods);
         $method  = strtolower($method);
 
         if (in_array($method, $methods) === true) {
+            return $this->object->$method(...$args);
+        }
+
+        // aliases
+        $aliases = array_keys($this->object::$aliases);
+        $alias   = strtolower($method);
+
+        if (in_array($alias, $aliases) === true) {
             return $this->object->$method(...$args);
         }
 
