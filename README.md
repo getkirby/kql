@@ -265,7 +265,7 @@ KQL becomes really powerful by its flexible way to control the result set with t
 
 #### Select single properties and fields
 
-To include a property or field in your results, list them as an array. Check out our reference for available properties for pages, users, files, etc: https://getkirby.com/docs/reference
+To include a property or field in your results, list them as an array. Check out our [reference for available properties](https://getkirby.com/docs/reference) for pages, users, files, etc.
 
 ```js
 const response = await $fetch(api, {
