@@ -12,7 +12,7 @@ You can play in our [KQL sandbox](https://kql.getkirby.com). The sandbox is base
 
 ## Example
 
-Given a POST request to: `/api/query``
+Given a POST request to: `/api/query`
 
 ```json
 {
