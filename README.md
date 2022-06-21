@@ -910,7 +910,7 @@ class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 }
 ```
 
-Interceptor classes are pretty straight forward. With the CLASS_ALIAS you can give objects with that class a short name for KQL queries. The `$toArray` property lists all methods that should be rendered if you don't run a subquery. I.e. in this case `kirby.system` would render an array with the `isInstallable` value.
+Interceptor classes are pretty straight forward. With the `CLASS_ALIAS` you can give objects with that class a short name for KQL queries. The `$toArray` property lists all methods that should be rendered if you don't run a subquery. I.e. in this case `kirby.system` would render an array with the `isInstallable` value.
 
 The `allowedMethods` method must return an array of all methods that can be access for this object. In addition to that you can also create your own custom methods in an interceptor that will then become available in KQL.
 
