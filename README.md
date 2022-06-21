@@ -35,11 +35,7 @@ Given a POST request to: `/api/query`
 ```
 
 <details open>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```json
 {
@@ -173,11 +169,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -204,11 +196,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -243,11 +231,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -281,11 +265,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -346,11 +326,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -406,11 +382,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -451,11 +423,7 @@ console.log(response);
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -501,11 +469,7 @@ const response = await $fetch(api, {
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -551,11 +515,7 @@ const response = await $fetch(api, {
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -608,11 +568,7 @@ const response = await $fetch(api, {
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -676,11 +632,7 @@ const response = await $fetch(api, {
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
@@ -739,11 +691,7 @@ const response = await $fetch(api, {
 ```
 
 <details>
-<summary>
-
-🆗 **Response**
-
-</summary>
+<summary>🆗 Response</summary>
 
 ```js
 {
