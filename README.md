@@ -114,7 +114,7 @@ return [
 ];
 ```
 
-### Sending POST requests
+### Sending POST Requests
 
 You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [ohmyfetch](https://github.com/unjs/ohmyfetch) (a better fetch API for Node and the browser) and JavaScript to retreive data from our Kirby installation.
 
@@ -150,11 +150,11 @@ console.log(response);
 
 With the query, you can fetch data from anywhere in your Kirby site. You can query fields, pages, files, users, languages, roles and more.
 
-#### Queries without selects
+#### Queries Without Selects
 
 When you don't pass the select option, Kirby will try to come up with the most useful result set for you. This is great for simple queries.
 
-##### Fetching the site title
+##### Fetching the Site Title
 
 ```js
 const response = await $fetch(api, {
@@ -181,7 +181,7 @@ console.log(response);
 
 </details>
 
-##### Fetching a list of page ids
+##### Fetching a List of Page IDs
 
 ```js
 const response = await $fetch(api, {
@@ -214,7 +214,7 @@ console.log(response);
 
 </details>
 
-#### Running field methods
+#### Running Field Methods
 
 Queries can even execute field methods.
 
@@ -247,7 +247,7 @@ console.log(response);
 
 KQL becomes really powerful by its flexible way to control the result set with the select option.
 
-#### Select single properties and fields
+#### Select Single Properties and Fields
 
 To include a property or field in your results, list them as an array. Check out our [reference for available properties](https://getkirby.com/docs/reference) for pages, users, files, etc.
 
@@ -362,7 +362,7 @@ console.log(response);
 
 </details>
 
-#### Using queries for properties and fields
+#### Using Queries for Properties and Fields
 
 Instead of passing true, you can also pass a string query to specify what you want to return for each key in your select object.
 
@@ -405,7 +405,7 @@ console.log(response);
 
 </details>
 
-#### Executing field methods
+#### Executing Field Methods
 
 ```js
 const response = await $fetch(api, {
@@ -446,7 +446,7 @@ console.log(response);
 
 </details>
 
-#### Creating aliases
+#### Creating Aliases
 
 String queries are a perfect way to create aliases or return variations of the same field or property multiple times.
 
@@ -544,7 +544,7 @@ const response = await $fetch(api, {
 
 </details>
 
-#### Subqueries with selects
+#### Subqueries With Selects
 
 You can also pass an object with a `query` and a `select` option
 
@@ -719,7 +719,7 @@ const response = await $fetch(api, {
 
 </details>
 
-### Pagination in subqueries
+### Pagination in Subqueries
 
 Pagination settings also work for subqueries.
 
@@ -746,7 +746,7 @@ const response = await $fetch(api, {
 });
 ```
 
-### Multiple queries in a single call
+### Multiple Queries in a Single Call
 
 With the power of selects and subqueries you can basically query the entire site in a single request
 
@@ -790,11 +790,11 @@ const response = await $fetch(api, {
 });
 ```
 
-### Allowing methods
+### Allowing Methods
 
 KQL is very strict with allowed methods by default. Custom page methods, file methods or model methods are not allowed to make sure you don't miss an important security issue by accident. You can allow additional methods though.
 
-#### Allow list
+#### Allow List
 
 The most straight forward way is to define allowed methods in your config.
 
@@ -812,7 +812,7 @@ return [
 ];
 ```
 
-#### DocBlock comment
+#### DocBlock Comment
 
 You can also add a comment to your methods' doc blocks to allow them:
 
@@ -844,7 +844,7 @@ Kirby::plugin('your-name/your-plugin', [
 ]);
 ```
 
-### Blocking methods
+### Blocking Methods
 
 You can block individual class methods that would normally be accessible by listing them in your config:
 
@@ -862,7 +862,7 @@ return [
 ];
 ```
 
-### Blocking classes
+### Blocking Classes
 
 Sometimes you might want to reduce access to various parts of the system. This can be done by blocking individual methods (see above) or by blocking entire classes.
 
@@ -882,7 +882,7 @@ return [
 
 Now, access to any user is blocked.
 
-### Custom classes and interceptors
+### Custom Classes and Interceptors
 
 If you want to add support for a custom class or a class in Kirby's source that is not supported yet, you can list your own interceptors in your config
 
@@ -940,7 +940,7 @@ class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 
 This custom method can now be used with `kirby.system.isReady` in KQL and will return `yes it is!`
 
-### Unintercepted classes
+### Unintercepted Classes
 
 If you want to fully allow access to an entire class without putting an interceptor in between, you can add the class to the allow list in your config:
 
@@ -958,9 +958,13 @@ return [
 
 This will introduce full access to all public class methods. This can be very risky though and you should avoid this if possible.
 
-### No mutations
+### No Mutations
 
 KQL only offers access to data in your site. It does not support any mutations. All destructive methods are blocked and cannot be accessed in queries.
+
+## Plugins
+
+- [nuxt-kql](https://nuxt-kql.jhnn.dev): A Nuxt 3 module for KQL.
 
 ## License
 
