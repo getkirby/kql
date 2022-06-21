@@ -799,8 +799,6 @@ KQL is very strict with allowed methods by default. Custom page methods, file me
 The most straight forward way is to define allowed methods in your config.
 
 ```php
-<?php
-
 return [
   'kql' => [
     'methods' => [
@@ -849,8 +847,6 @@ Kirby::plugin('your-name/your-plugin', [
 You can block individual class methods that would normally be accessible by listing them in your config:
 
 ```php
-<?php
-
 return [
   'kql' => [
     'methods' => [
@@ -867,8 +863,6 @@ return [
 Sometimes you might want to reduce access to various parts of the system. This can be done by blocking individual methods (see above) or by blocking entire classes.
 
 ```php
-<?php
-
 return [
   'kql' => [
     'classes' => [
@@ -887,8 +881,6 @@ Now, access to any user is blocked.
 If you want to add support for a custom class or a class in Kirby's source that is not supported yet, you can list your own interceptors in your config
 
 ```php
-<?php
-
 return [
   'kql' => [
     'interceptors' => [
@@ -901,8 +893,6 @@ return [
 You can put the class for such a custom interceptor in a plugin for example.
 
 ```php
-<?php
-
 class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 {
   public const CLASS_ALIAS = 'system';
@@ -925,8 +915,6 @@ Interceptor classes are pretty straight forward. With the CLASS_ALIAS you can gi
 The `allowedMethods` method must return an array of all methods that can be access for this object. In addition to that you can also create your own custom methods in an interceptor that will then become available in KQL.
 
 ```php
-<?php
-
 class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 {
   ...
