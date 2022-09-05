@@ -12,14 +12,14 @@ require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 $bootstrapper = dirname(__DIR__, 4) . '/kirby/bootstrap.php';
 
 if (is_file($bootstrapper)) {
-    require_once $bootstrapper;
+	require_once $bootstrapper;
 }
 
 // sandbox
 $bootstrapper = dirname(__DIR__, 5) . '/kirby/bootstrap.php';
 
 if (is_file($bootstrapper)) {
-    require_once $bootstrapper;
+	require_once $bootstrapper;
 }
 
 kirby();
