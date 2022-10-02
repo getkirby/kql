@@ -72,12 +72,10 @@ class Model extends Interceptor
 			'mediaUrl',
 			'modified',
 			'permissions',
-			'panelIcon',
-			'panelId',
-			'panelPath',
-			'panelUrl',
+			'panel',
+			'permalink',
 			'previewUrl',
-			'url'
+			'url',
 		];
 	}
 
@@ -106,5 +104,10 @@ class Model extends Interceptor
 			'parentModel',
 			'site',
 		];
+	}
+
+	public function uuid(): string
+	{
+		return $this->object->uuid()->toString();
 	}
 }
