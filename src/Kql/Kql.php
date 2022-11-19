@@ -70,25 +70,7 @@ class Kql
 		$site  = $kirby->site();
 		$model = $model ?? $site;
 
-		$query = new Query($query, [
-			'collection' => function (string $id) use ($kirby) {
-				return $kirby->collection($id);
-			},
-			'file'  => function (string $id) use ($kirby) {
-				return $kirby->file($id);
-			},
-			'kirby' => $kirby,
-			'page'  => function (string $id) use ($site) {
-				return $site->find($id);
-			},
-			'site'  => $site,
-			'user'  => function (string $id = null) use ($kirby) {
-				return $kirby->user($id);
-			},
-			$model::CLASS_ALIAS => $model
-		]);
-
-		return $query->result();
+		return Query::factory($query)->resolve([$model::CLASS_ALIAS => $model]);
 	}
 
 	public static function render($value)
