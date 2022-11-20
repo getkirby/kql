@@ -4,24 +4,11 @@ namespace Kirby\Kql;
 
 use Kirby\Cms\Page;
 
-class TestObject {
-	public function foo(string $bar = 'hello'): array
- 	{
-		return [$bar];
- 	}
-
-	public function more(): string
- 	{
-		return 'no';
- 	}
-}
-
 /**
  * @coversDefaultClass \Kirby\Kql\Help
  */
 class HelpTest extends TestCase
 {
-
 	/**
 	 * @covers ::for
 	 */
@@ -126,7 +113,7 @@ class HelpTest extends TestCase
 	 */
 	public function testForObjectWithOriginalObject()
 	{
-		$app = $this->app->clone([
+		$this->app->clone([
 			'options' => [
 				'kql' => ['classes' => ['allowed' => ['Kirby\Kql\TestObject']]]
 			]

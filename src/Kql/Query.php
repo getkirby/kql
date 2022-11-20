@@ -16,6 +16,12 @@ use Kirby\Query\Query as BaseQuery;
  */
 class Query extends BaseQuery
 {
+	/**
+	 * Intercepts the chain of segments called
+	 * on each other by replacing objects with
+	 * their corresponding Interceptor which
+	 * handles blocking calls to restricted methods
+	 */
 	public function intercept(mixed $result): mixed
 	{
 		if (is_object($result) === false) {

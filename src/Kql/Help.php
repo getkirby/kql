@@ -18,7 +18,6 @@ use ReflectionMethod;
  */
 class Help
 {
-
 	/**
 	 * Provides information about passed value
 	 * depending on its type
