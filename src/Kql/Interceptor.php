@@ -3,11 +3,9 @@
 namespace Kirby\Kql;
 
 use Closure;
-use Exception;
 use Kirby\Cms\App;
+use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
-use Kirby\Kql\Help;
-use Kirby\Kql\Kql;
 use Kirby\Toolkit\Str;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -31,9 +29,14 @@ abstract class Interceptor
 	protected $toArray = [];
 
 	public function __construct(protected $object)
-	{}
+	{
+	}
 
-	public function __call($method, array $args = [])
+	/**
+	 * Magic caller that prevents access
+	 * to restricted methods
+	 */
+	public function __call(string $method, array $args = [])
 	{
 		if ($this->isAllowedMethod($method) === true) {
 			return $this->object->$method(...$args);
@@ -42,6 +45,10 @@ abstract class Interceptor
 		$this->forbiddenMethod($method);
 	}
 
+	/**
+	 * Return information about corresponding object
+	 * incl. information about allowed methods
+	 */
 	public function __debugInfo(): array
 	{
 		$help = Help::forMethods($this->object, $this->allowedMethods());
@@ -53,53 +60,45 @@ abstract class Interceptor
 		];
 	}
 
+	/**
+	 * Returns list of allowed classes. Specific list
+	 * to be implemented in specific interceptor child classes.
+	 */
 	public function allowedMethods(): array
 	{
 		return [];
 	}
 
-	protected static function class(string $class): string
+	/**
+	 * Returns class name for Interceptor that responds
+	 * to passed name string of a Kirby core class
+	 * @internal
+	 */
+	public static function class(string $class): string
 	{
 		return str_replace('Kirby\\', 'Kirby\\Kql\\Interceptors\\', $class);
 	}
 
+	/**
+	 * Throws exception for accessing a restricted method
+	 * @throws \Kirby\Exception\PermissionException
+	 */
 	protected function forbiddenMethod(string $method)
 	{
 		$name = get_class($this->object) . '::' . $method . '()';
-		throw new PermissionException('The method "' . $name .  '" is not allowed in the API context');
-	}
-
-	/**
-	 * Returns a registered method by name, either from
-	 * the current class or from a parent class ordered by
-	 * inheritance order (top to bottom)
-	 */
-	protected function getMethod(string $method): Closure|null
-	{
-		if (isset($this->object::$methods[$method]) === true) {
-			return $this->object::$methods[$method];
-		}
-
-		foreach (class_parents($this->object) as $parent) {
-			if (isset($parent::$methods[$method]) === true) {
-				return $parent::$methods[$method];
-			}
-		}
-
-		return null;
+		throw new PermissionException('The method "' . $name . '" is not allowed in the API context');
 	}
 
 	protected function isAllowedCallable($method): bool
 	{
 		try {
-			$ref = match(true) {
+			$ref = match (true) {
 				$method instanceof Closure
 					=> new ReflectionFunction($method),
 				is_string($method) === true
 					=> new ReflectionMethod($this->object, $method),
 				default
-					=> throw new Exception('Invalid method')
-
+				=> throw new InvalidArgumentException('Invalid method')
 			};
 
 			if ($comment = $ref->getDocComment()) {
@@ -107,7 +106,8 @@ abstract class Interceptor
 					return true;
 				}
 			}
-		} catch (Throwable) {}
+		} catch (Throwable) {
+		}
 
 		return false;
 	}
@@ -161,7 +161,7 @@ abstract class Interceptor
 		}
 
 		// does not have that method
-		if (!$call = $this->getMethod($method)) {
+		if (!$call = $this->method($method)) {
 			return false;
 		}
 
@@ -173,10 +173,36 @@ abstract class Interceptor
 		return false;
 	}
 
+	/**
+	 * Returns a registered method by name, either from
+	 * the current class or from a parent class ordered by
+	 * inheritance order (top to bottom)
+	 */
+	protected function method(string $method): Closure|null
+	{
+		if (isset($this->object::$methods[$method]) === true) {
+			return $this->object::$methods[$method];
+		}
+
+		foreach (class_parents($this->object) as $parent) {
+			if (isset($parent::$methods[$method]) === true) {
+				return $parent::$methods[$method];
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Tries to replace a Kirby core object with the
+	 * corresponding interceptor.
+	 * @throws \Kirby\Exception\InvalidArgumentException for non-objects
+	 * @throws \Kirby\Exception\PermissionException when accessing blocked class
+	 */
 	public static function replace($object)
 	{
 		if (is_object($object) === false) {
-			throw new Exception('Unsupported value: ' . gettype($object));
+			throw new InvalidArgumentException('Unsupported value: ' . gettype($object));
 		}
 
 		$kirby = App::instance();
@@ -249,6 +275,11 @@ abstract class Interceptor
 		return Kql::select($this, $toArray);
 	}
 
+	/**
+	 * Mirrors by default ::toArray but can be
+	 * implemented differently by specifc interceptor.
+	 * KQL will prefer ::toResponse over ::toArray
+	 */
 	public function toResponse()
 	{
 		return $this->toArray();

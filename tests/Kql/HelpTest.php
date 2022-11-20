@@ -100,8 +100,6 @@ class HelpTest extends TestCase
 		$object = new Page(['slug' => 'test']);
 		$result = Help::forObject($object);
 
-
-
 		$this->assertSame('page', $result['type']);
 		$this->assertArrayHasKey('methods', $result);
 		$this->assertArrayHasKey('value', $result);

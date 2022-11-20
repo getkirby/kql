@@ -9,15 +9,13 @@ use Kirby\Exception\PermissionException;
  */
 class KqlTest extends TestCase
 {
-
 	/**
-	 * @covers ::forbiddenMethod
+	 * @covers ::help
 	 */
-	public function testForbiddenMethod()
+	public function testHelp()
 	{
-		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
-		Kql::run('site.children.first.delete');
+		$result = Kql::help('foo');
+		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
 	}
 
 	/**
@@ -31,15 +29,9 @@ class KqlTest extends TestCase
 		]);
 
 		$expected = [
-			[
-				'slug' => 'projects',
-			],
-			[
-				'slug' => 'about',
-			],
-			[
-				'slug' => 'contact',
-			]
+			['slug' => 'projects'],
+			['slug' => 'about'],
+			['slug' => 'contact']
 		];
 
 		$this->assertSame($expected, $result);
@@ -57,6 +49,28 @@ class KqlTest extends TestCase
 	}
 
 	/**
+	 * @covers ::render
+	 */
+	public function testRender()
+	{
+		// non-object: returns value directly
+		$result = Kql::render('foo');
+		$this->assertSame('foo', $result);
+
+		// TODO: intercepted object
+	}
+
+	/**
+	 * @covers ::run
+	 */
+	public function testRunForbiddenMethod()
+	{
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
+		Kql::run('site.children.first.delete');
+	}
+
+	/**
 	 * @covers ::select
 	 */
 	public function testSelectWithAlias()
@@ -67,11 +81,7 @@ class KqlTest extends TestCase
 			]
 		]);
 
-		$expected = [
-			'myTitle' => 'Test Site',
-		];
-
-		$this->assertSame($expected, $result);
+		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
 	/**

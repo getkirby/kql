@@ -18,11 +18,6 @@ use Kirby\Toolkit\Str;
  */
 class Kql
 {
-	public static function help($object): array
-	{
-		return Help::for($object);
-	}
-
 	public static function fetch($model, $key, $selection)
 	{
 		// simple key/value
@@ -44,6 +39,15 @@ class Kql
 
 		// nested queries
 		return static::run($selection, $model);
+	}
+
+	/**
+	 * Returns helpful information about the object
+	 * type as well as, if available, values and methods
+	 */
+	public static function help($object): array
+	{
+		return Help::for($object);
 	}
 
 	public static function query(string $query, $model = null)
@@ -93,11 +97,9 @@ class Kql
 			return $result;
 		}
 
-		$query   = $input['query'] ?? 'site';
+		$query   = $input['query']  ?? 'site';
 		$select  = $input['select'] ?? null;
-		$options = [
-			'pagination' => $input['pagination'] ?? null,
-		];
+		$options = ['pagination' => $input['pagination'] ?? null];
 
 		// check for invalid queries
 		if (is_string($query) === false) {
@@ -105,7 +107,6 @@ class Kql
 		}
 
 		$result = static::query($query, $model);
-
 		return static::select($result, $select, $options);
 	}
 
@@ -124,15 +125,18 @@ class Kql
 		}
 
 		if (is_object($data) === true) {
-			return static::selectFromObject($data, $select, $options);
+			return static::selectFromObject($data, $select);
 		}
 
 		if (is_array($data) === true) {
-			return static::selectFromArray($data, $select, $options);
+			return static::selectFromArray($data, $select);
 		}
 	}
 
-	public static function selectFromArray($array, $select, array $options = [])
+	/**
+	 * @internal
+	 */
+	public static function selectFromArray($array, $select)
 	{
 		$result = [];
 
@@ -152,6 +156,9 @@ class Kql
 		return $result;
 	}
 
+	/**
+	 * @internal
+	 */
 	public static function selectFromCollection(Collection $collection, $select, array $options = [])
 	{
 		if ($options['pagination'] ?? false) {
@@ -180,7 +187,10 @@ class Kql
 		return $data;
 	}
 
-	public static function selectFromObject($object, $select, array $options = [])
+	/**
+	 * @internal
+	 */
+	public static function selectFromObject($object, $select)
 	{
 		// replace actual object with intercepting proxy class
 		$object = Interceptor::replace($object);

@@ -50,6 +50,8 @@ class Help
 	}
 
 	/**
+	 * Gathers information for method about
+	 * name, parameters, return type etc.
 	 * @internal
 	 */
 	public static function forMethod(object $object, string $method): array
@@ -100,6 +102,7 @@ class Help
 	}
 
 	/**
+	 * Gathers informations for each unique method
 	 * @internal
 	 */
 	public static function forMethods(object $object, array $methods): array
@@ -121,6 +124,8 @@ class Help
 	}
 
 	/**
+	 * Retrieves info for objects either from Interceptor (to
+	 * only list allowed methods) or via reflection
 	 * @internal
 	 */
 	public static function forObject(object $object): array
@@ -134,11 +139,13 @@ class Help
 
 		// for original classes, use reflection
 		$class   = new ReflectionClass($object);
-		$methods = $class->getMethods();
-		$methods = A::map($methods, fn ($method) => static::forMethod($object, $method->getName()));
+		$methods = A::map(
+			$class->getMethods(),
+			fn ($method) => static::forMethod($object, $method->getName())
+		);
 
 		return [
-			'type'    => get_class($object),
+			'type'    => $class->getName(),
 			'methods' => $methods
 		];
 	}
