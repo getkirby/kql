@@ -2,43 +2,27 @@
 
 namespace Kirby\Kql;
 
-use Kirby\Cms\App;
-use PHPUnit\Framework\TestCase;
+use Kirby\Exception\PermissionException;
 
+/**
+ * @coversDefaultClass \Kirby\Kql\Kql
+ */
 class KqlTest extends TestCase
 {
-	public function setUp(): void
-	{
-		$this->app = new App([
-			'roots' => [
-				'index' => '/dev/null'
-			],
-			'site' => [
-				'children' => [
-					[
-						'slug' => 'projects'
-					],
-					[
-						'slug' => 'about'
-					],
-					[
-						'slug' => 'contact'
-					]
-				],
-				'content' => [
-					'title' => 'Test Site'
-				],
-			]
-		]);
-	}
 
+	/**
+	 * @covers ::forbiddenMethod
+	 */
 	public function testForbiddenMethod()
 	{
-		$this->expectException("Kirby\Exception\PermissionException");
+		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
-		$result = Kql::run('site.children.first.delete');
+		Kql::run('site.children.first.delete');
 	}
 
+	/**
+	 * @covers ::query
+	 */
 	public function testQuery()
 	{
 		$result = Kql::run([
@@ -61,6 +45,9 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::run
+	 */
 	public function testRun()
 	{
 		$result   = Kql::run('site.title');
@@ -69,6 +56,9 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::select
+	 */
 	public function testSelectWithAlias()
 	{
 		$result = Kql::run([
@@ -84,6 +74,10 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::select
+	 * @covers ::selectFromArray
+	 */
 	public function testSelectWithArray()
 	{
 		$result = Kql::run([
@@ -98,6 +92,9 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::select
+	 */
 	public function testSelectWithBoolean()
 	{
 		$result = Kql::run([
@@ -113,6 +110,11 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::select
+	 * @covers ::selectFromCollection
+	 * @covers ::selectFromObject
+	 */
 	public function testSelectWithQuery()
 	{
 		$result = Kql::run([
@@ -141,6 +143,9 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
+	/**
+	 * @covers ::select
+	 */
 	public function testSelectWithString()
 	{
 		$result = Kql::run([

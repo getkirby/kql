@@ -2,6 +2,7 @@
 
 namespace Kirby\Kql;
 
+use Exception;
 use Kirby\Cms\App;
 use Kirby\Cms\Blueprint;
 use Kirby\Cms\Content;
@@ -16,7 +17,7 @@ use Kirby\Cms\Site;
 use Kirby\Cms\SiteBlueprint;
 use Kirby\Cms\User;
 use Kirby\Cms\UserBlueprint;
-use PHPUnit\Framework\TestCase;
+use Kirby\Exception\PermissionException;
 
 class AppExtended extends App
 {
@@ -37,6 +38,10 @@ class UserExtended extends User
 {
 }
 
+
+/**
+ * @coversDefaultClass \Kirby\Kql\Interceptor
+ */
 class InterceptorTest extends TestCase
 {
 	public function objectProvider()
@@ -142,9 +147,8 @@ class InterceptorTest extends TestCase
 	}
 
 	/**
+	 * @covers ::replace
 	 * @dataProvider objectProvider
-	 * @param mixed $object
-	 * @param mixed $inspector
 	 */
 	public function testReplace($object, $inspector)
 	{
@@ -152,17 +156,23 @@ class InterceptorTest extends TestCase
 		$this->assertInstanceOf($inspector, $result);
 	}
 
+	/**
+	 * @covers ::replace
+	 */
 	public function testReplaceNonObject()
 	{
-		$this->expectException('Exception');
+		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Unsupported value: string');
 
 		$result = Interceptor::replace('hello');
 	}
 
+	/**
+	 * @covers ::replace
+	 */
 	public function testReplaceUnknownObject()
 	{
-		$this->expectException('Kirby\Exception\PermissionException');
+		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
 
 		$object = new \stdClass();

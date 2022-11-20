@@ -18,7 +18,11 @@
 
 	<testsuites>
 		<testsuite name="Tests">
-			<directory>./tests/</directory>
+			<directory>./tests</directory>
 		</testsuite>
 	</testsuites>
+
+	<php>
+		<ini name="memory_limit" value="2048M" />
+	</php>
 </phpunit>

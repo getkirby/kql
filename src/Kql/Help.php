@@ -2,6 +2,8 @@
 
 namespace Kirby\Kql;
 
+use Kirby\Toolkit\A;
+use ReflectionClass;
 use ReflectionMethod;
 
 /**
@@ -124,6 +126,21 @@ class Help
 	 */
 	public static function forObject(object $object): array
 	{
-		return Interceptor::replace($object)->__debugInfo();
+		// get interceptor object to only return info on allowed methods
+		$interceptor = Interceptor::replace($object);
+
+		if ($interceptor instanceof Interceptor) {
+			return $interceptor->__debugInfo();
+		}
+
+		// for original classes, use reflection
+		$class   = new ReflectionClass($object);
+		$methods = $class->getMethods();
+		$methods = A::map($methods, fn ($method) => static::forMethod($object, $method->getName()));
+
+		return [
+			'type'    => get_class($object),
+			'methods' => $methods
+		];
 	}
 }

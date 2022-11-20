@@ -42,6 +42,17 @@ abstract class Interceptor
 		$this->forbiddenMethod($method);
 	}
 
+	public function __debugInfo(): array
+	{
+		$help = Help::forMethods($this->object, $this->allowedMethods());
+
+		return [
+			'type'    => $this::CLASS_ALIAS,
+			'methods' => $help,
+			'value'   => $this->toArray()
+		];
+	}
+
 	public function allowedMethods(): array
 	{
 		return [];
@@ -162,17 +173,6 @@ abstract class Interceptor
 		return false;
 	}
 
-	public function __debugInfo(): array
-	{
-		$help = Help::forMethods($this->object, $this->allowedMethods());
-
-		return [
-			'type'    => $this::CLASS_ALIAS,
-			'methods' => $help,
-			'value'   => $this->toArray()
-		];
-	}
-
 	public static function replace($object)
 	{
 		if (is_object($object) === false) {
@@ -183,6 +183,7 @@ abstract class Interceptor
 		$class = get_class($object);
 		$name  = strtolower($class);
 
+		// 1. Is $object class explicitly blocked?
 		// get list of blocked classes from config
 		$blocked = $kirby->option('kql.classes.blocked', []);
 		$blocked = array_map('strtolower', $blocked);
@@ -192,11 +193,13 @@ abstract class Interceptor
 			throw new PermissionException('Access to the class "' . $class . '" is blocked');
 		}
 
+		// 2. Is $object already an interceptor?
 		// directly return interceptor objects
 		if ($object instanceof Interceptor) {
 			return $object;
 		}
 
+		// 3. Does an interceptor class for $object exist?
 		// check for an interceptor class
 		$interceptors = $kirby->option('kql.interceptors', []);
 		$interceptors = array_change_key_case($interceptors, CASE_LOWER);
@@ -208,6 +211,7 @@ abstract class Interceptor
 			return new $interceptor($object);
 		}
 
+		// 4. Also check for parent classes of $object
 		// go through parents of the current object to use their interceptors as fallback
 		foreach (class_parents($object) as $parent) {
 			$interceptor = static::class($parent);
@@ -217,6 +221,7 @@ abstract class Interceptor
 			}
 		}
 
+		// 5. $object has no interceptor but is explicitly allowed?
 		// check for a class in the allow list
 		$allowed = $kirby->option('kql.classes.allowed', []);
 		$allowed = array_map('strtolower', $allowed);
@@ -226,6 +231,7 @@ abstract class Interceptor
 			return $object;
 		}
 
+		// 6. None of the above? Block class.
 		throw new PermissionException('Access to the class "' . $class . '" is not supported');
 	}
 

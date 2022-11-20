@@ -36,7 +36,10 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Kirby\\": "src/"
+			"Kirby\\": [
+				"src/",
+				"tests/"
+			]
 		}
 	},
 	"extra": {
