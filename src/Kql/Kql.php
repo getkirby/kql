@@ -3,14 +3,75 @@
 namespace Kirby\Kql;
 
 use Exception;
+use Kirby\Cms\App;
 use Kirby\Cms\Collection;
 use Kirby\Toolkit\Str;
 
+/**
+ * ...
+ *
+ * @package   Kirby KQL
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      https://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   https://getkirby.com/license
+ */
 class Kql
 {
-	public static function help($object)
+	public static function help($object): array
 	{
 		return Help::for($object);
+	}
+
+	public static function fetch($model, $key, $selection)
+	{
+		// simple key/value
+		if ($selection === true) {
+			return static::render($model->$key());
+		}
+
+		// selection without additional query
+		if (
+			is_array($selection) === true &&
+			empty($selection['query']) === true
+		) {
+			return static::select(
+				$model->$key(),
+				$selection['select'] ?? null,
+				$selection['options'] ?? []
+			);
+		}
+
+		// nested queries
+		return static::run($selection, $model);
+	}
+
+	public static function query(string $query, $model = null)
+	{
+		$model ??= App::instance()->site();
+		$data    = [$model::CLASS_ALIAS => $model];
+
+		return Query::factory($query)->resolve($data);
+	}
+
+	public static function render($value)
+	{
+		if (is_object($value) === true) {
+			// replace actual object with intercepting proxy class
+			$object = Interceptor::replace($value);
+
+			if (method_exists($object, 'toResponse') === true) {
+				return $object->toResponse();
+			}
+
+			if (method_exists($object, 'toArray') === true) {
+				return $object->toArray();
+			}
+
+			throw new Exception('The object "' . get_class($object) . '" cannot be rendered. Try querying one of its methods instead.');
+		}
+
+		return $value;
 	}
 
 	public static function run($input, $model = null)
@@ -48,50 +109,6 @@ class Kql
 		return static::select($result, $select, $options);
 	}
 
-	public static function fetch($model, $key, $selection)
-	{
-		// simple key/value
-		if ($selection === true) {
-			return static::render($model->$key());
-		}
-
-		// selection without additional query
-		if (is_array($selection) === true && empty($selection['query']) === true) {
-			return static::select($model->$key(), $selection['select'] ?? null, $selection['options'] ?? []);
-		}
-
-		// nested queries
-		return static::run($selection, $model);
-	}
-
-	public static function query(string $query, $model = null)
-	{
-		$kirby = kirby();
-		$site  = $kirby->site();
-		$model = $model ?? $site;
-
-		return Query::factory($query)->resolve([$model::CLASS_ALIAS => $model]);
-	}
-
-	public static function render($value)
-	{
-		if (is_object($value) === true) {
-			$object = Interceptor::replace($value);
-
-			if (method_exists($object, 'toResponse') === true) {
-				return $object->toResponse();
-			}
-
-			if (method_exists($object, 'toArray') === true) {
-				return $object->toArray();
-			}
-
-			throw new Exception('The object "' . get_class($object) . '" cannot be rendered. Try querying one of its methods instead.');
-		}
-
-		return $value;
-	}
-
 	public static function select($data, $select, array $options = [])
 	{
 		if ($select === null) {
@@ -102,7 +119,7 @@ class Kql
 			return static::help($data);
 		}
 
-		if (is_a($data, 'Kirby\Cms\Collection') === true) {
+		if ($data instanceof Collection) {
 			return static::selectFromCollection($data, $select, $options);
 		}
 
@@ -165,6 +182,7 @@ class Kql
 
 	public static function selectFromObject($object, $select, array $options = [])
 	{
+		// replace actual object with intercepting proxy class
 		$object = Interceptor::replace($object);
 		$result = [];
 

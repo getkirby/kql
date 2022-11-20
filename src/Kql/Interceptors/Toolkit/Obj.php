@@ -2,7 +2,7 @@
 
 namespace Kirby\Kql\Interceptors\Toolkit;
 
-use Kirby\Kql\Interceptors\Interceptor;
+use Kirby\Kql\Interceptor;
 
 class Obj extends Interceptor
 {

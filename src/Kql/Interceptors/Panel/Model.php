@@ -2,7 +2,7 @@
 
 namespace Kirby\Kql\Interceptors\Panel;
 
-use Kirby\Kql\Interceptors\Interceptor;
+use Kirby\Kql\Interceptor;
 
 class Model extends Interceptor
 {

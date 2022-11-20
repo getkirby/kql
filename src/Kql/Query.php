@@ -18,6 +18,10 @@ class Query extends BaseQuery
 {
 	public function intercept(mixed $result): mixed
 	{
+		if (is_object($result) === false) {
+			return $result;
+		}
+
 		return Interceptor::replace($result);
 	}
 }
