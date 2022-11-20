@@ -20,5 +20,5 @@ insert_final_newline = true
 [*.yml]
 indent_style = space
 
-[*.md]
+[*.md,*.txt]
 trim_trailing_whitespace = false

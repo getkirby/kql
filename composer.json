@@ -17,15 +17,21 @@
 		{
 			"name": "Bastian Allgeier",
 			"email": "bastian@getkirby.com"
+		},
+		{
+			"name": "Nico Hoffmann",
+			"email": "nico@getkirby.com"
 		}
 	],
 	"require": {
+		"php": ">=8.0.0 <8.2.0",
+		"getkirby/cms": ">=3.8.2",
 		"getkirby/composer-installer": "^1.2.1"
 	},
 	"config": {
 		"optimize-autoloader": true,
 		"allow-plugins": {
-			"getkirby/composer-installer": false
+			"getkirby/composer-installer": true
 		}
 	},
 	"autoload": {
@@ -33,7 +39,12 @@
 			"Kirby\\": "src/"
 		}
 	},
+	"extra": {
+		"installer-name": "versions",
+		"kirby-cms-path": false
+	},
 	"scripts": {
-		"fix": "php-cs-fixer fix"
+		"fix": "php-cs-fixer fix",
+		"test": "phpunit"
 	}
 }
