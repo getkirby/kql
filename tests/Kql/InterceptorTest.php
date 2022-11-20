@@ -52,7 +52,7 @@ class InterceptorTest extends TestCase
 			],
 			[
 				new Blueprint([
-					'model' => new Page([
+					'model' => $page = new Page([
 						'slug' => 'test'
 					]),
 					'name'  => 'test',
@@ -68,40 +68,34 @@ class InterceptorTest extends TestCase
 				'Kirby\\Kql\\Interceptors\\Cms\\Field'
 			],
 			[
-				new File(['filename' => 'test.jpg']),
+				$file = new File(['filename' => 'test.jpg', 'parent' => $page]),
 				'Kirby\\Kql\\Interceptors\\Cms\\File'
 			],
 			[
 				new FileBlueprint([
-					'model' => new File([
-						'filename' => 'test.jpg'
-					]),
+					'model' => $file,
 					'name' => 'test',
 				]),
 				'Kirby\\Kql\\Interceptors\\Cms\\Blueprint'
 			],
 			[
-				new FileExtended(['filename' => 'test.jpg']),
+				new FileExtended(['filename' => 'test.jpg', 'parent' => $page]),
 				'Kirby\\Kql\\Interceptors\\Cms\\File'
 			],
 			[
 				new FileVersion([
-					'original' => new File([
-						'filename' => 'test.jpg',
-					]),
+					'original' => $file,
 					'url' => '/test.jpg'
 				]),
 				'Kirby\\Kql\\Interceptors\\Cms\\FileVersion'
 			],
 			[
-				new Page(['slug' => 'test']),
+				$page,
 				'Kirby\\Kql\\Interceptors\\Cms\\Page'
 			],
 			[
 				new PageBlueprint([
-					'model' => new Page([
-						'slug' => 'test'
-					]),
+					'model' => $page,
 					'name'  => 'test',
 				]),
 				'Kirby\\Kql\\Interceptors\\Cms\\Blueprint'
@@ -130,12 +124,12 @@ class InterceptorTest extends TestCase
 				'Kirby\\Kql\\Interceptors\\Cms\\Site'
 			],
 			[
-				new User(['email' => 'test@getkirby.com']),
+				$user = new User(['email' => 'test@getkirby.com']),
 				'Kirby\\Kql\\Interceptors\\Cms\\User'
 			],
 			[
 				new UserBlueprint([
-					'model' => new User(['email' => 'test@getkirby.com']),
+					'model' => $user,
 					'name'  => 'test',
 				]),
 				'Kirby\\Kql\\Interceptors\\Cms\\Blueprint'
@@ -149,6 +143,8 @@ class InterceptorTest extends TestCase
 
 	/**
 	 * @dataProvider objectProvider
+	 * @param mixed $object
+	 * @param mixed $inspector
 	 */
 	public function testReplace($object, $inspector)
 	{

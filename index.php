@@ -1,5 +1,8 @@
 <?php
 
+use Kirby\Cms\App;
+use Kirby\Kql\Kql;
+
 @include_once __DIR__ . '/vendor/autoload.php';
 
 class_alias('Kirby\Kql\Kql', 'Kql');
@@ -9,7 +12,7 @@ function kql($input, $model = null)
 	return Kql::run($input, $model);
 }
 
-Kirby::plugin('getkirby/kql', [
+App::plugin('getkirby/kql', [
 	'api' => [
 		'routes' => function ($kirby) {
 			return [

@@ -44,7 +44,16 @@
 		"kirby-cms-path": false
 	},
 	"scripts": {
+		"analyze": [
+			"@analyze:composer"
+		],
+		"analyze:composer": "composer validate --strict --no-check-version --no-check-all",
+		"ci": [
+			"@fix",
+			"@analyze",
+			"@test"
+		],
 		"fix": "php-cs-fixer fix",
-		"test": "phpunit"
+		"test": "phpunit --stderr --coverage-html=tests/coverage"
 	}
 }
