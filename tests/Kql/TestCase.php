@@ -27,6 +27,11 @@ class TestObject
 class TestObjectWithMethods extends TestObject
 {
 	public static array $methods = [];
+
+	public function toArray()
+	{
+		return [];
+	}
 }
 
 class TestObjectWithMethodsAsChild extends TestObjectWithMethods

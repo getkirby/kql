@@ -136,7 +136,7 @@ class Kql
 	/**
 	 * @internal
 	 */
-	public static function selectFromArray($array, $select)
+	public static function selectFromArray(array $array, array $select): array
 	{
 		$result = [];
 
@@ -159,7 +159,7 @@ class Kql
 	/**
 	 * @internal
 	 */
-	public static function selectFromCollection(Collection $collection, $select, array $options = [])
+	public static function selectFromCollection(Collection $collection, array|string $select, array $options = [])
 	{
 		if ($options['pagination'] ?? false) {
 			$collection = $collection->paginate($options['pagination']);
@@ -190,7 +190,7 @@ class Kql
 	/**
 	 * @internal
 	 */
-	public static function selectFromObject($object, $select)
+	public static function selectFromObject(object $object, array|string $select)
 	{
 		// replace actual object with intercepting proxy class
 		$object = Interceptor::replace($object);
