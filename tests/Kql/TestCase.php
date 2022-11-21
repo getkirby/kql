@@ -21,7 +21,8 @@ class TestObject
 	 * @kql-allowed
 	 */
 	public function homer()
-	{}
+	{
+	}
 }
 
 class TestObjectWithMethods extends TestObject

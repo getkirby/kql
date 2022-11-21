@@ -183,14 +183,18 @@ class InterceptorTest extends TestCase
 		$interceptor = new TestInterceptor($object);
 		$this->assertFalse($interceptor->isAllowedMethod('simple'));
 
-		TestObjectWithMethods::$methods = ['closure' => function () { return; }];
+		TestObjectWithMethods::$methods = ['closure' => function () {
+			
+		}];
 		$this->assertFalse($interceptor->isAllowedMethod('closure'));
 
 		TestObjectWithMethods::$methods = [
 			/**
 			 * @kql-allowed
 			 */
-			'closure' => function () { return; }
+			'closure' => function () {
+				
+			}
 		];
 		$this->assertTrue($interceptor->isAllowedMethod('closure'));
 

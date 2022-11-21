@@ -166,7 +166,6 @@ class KqlTest extends TestCase
 	 */
 	public function testSelectFromArray()
 	{
-
 		$data = [
 			'title' => 'Test Site',
 			'url'   => '/'
