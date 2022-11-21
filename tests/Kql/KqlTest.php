@@ -138,7 +138,7 @@ class KqlTest extends TestCase
 	public function testSelect()
 	{
 		// no select, returns data via ::render
-		$result = Kql::select('foo', null);
+		$result = Kql::select('foo');
 		$this->assertSame('foo', $result);
 
 		// help
