@@ -78,7 +78,7 @@ class Help
 
 			$call .= '$' . $name;
 
-			if ($required === false && $default === true) {
+			if ($required === false && $default !== null) {
 				$call .= ' = ' . var_export($default, true);
 			}
 

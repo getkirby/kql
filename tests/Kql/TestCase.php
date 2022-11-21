@@ -16,6 +16,22 @@ class TestObject
 	{
 		return 'no';
 	}
+
+	/**
+	 * @kql-allowed
+	 */
+	public function homer()
+	{}
+}
+
+class TestObjectWithMethods extends TestObject
+{
+	public static array $methods = [];
+}
+
+class TestObjectWithMethodsAsChild extends TestObjectWithMethods
+{
+	public static array $methods = [];
 }
 
 class TestCase extends BaseTestCase

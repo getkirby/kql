@@ -28,5 +28,5 @@
 
 	<php>
 		<ini name="memory_limit" value="2048M" />
-	</php>
+    </php>
 </phpunit>

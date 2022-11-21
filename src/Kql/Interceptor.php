@@ -63,6 +63,7 @@ abstract class Interceptor
 	/**
 	 * Returns list of allowed classes. Specific list
 	 * to be implemented in specific interceptor child classes.
+	 * @codeCoverageIgnore
 	 */
 	public function allowedMethods(): array
 	{
@@ -92,7 +93,7 @@ abstract class Interceptor
 	/**
 	 * Checks if method is allowed to call
 	 */
-	protected function isAllowedMethod($method)
+	public function isAllowedMethod($method)
 	{
 		$kirby = App::instance();
 		$name  = strtolower(get_class($this->object) . '::' . $method);
@@ -185,7 +186,7 @@ abstract class Interceptor
 	 * the current class or from a parent class ordered by
 	 * inheritance order (top to bottom)
 	 */
-	protected function method(string $method): Closure|null
+	protected function method(string $method)
 	{
 		if (isset($this->object::$methods[$method]) === true) {
 			return $this->object::$methods[$method];

@@ -45,7 +45,7 @@ class HelpTest extends TestCase
 		$object = new TestObject();
 		$result = Help::forMethod($object, 'foo');
 		$this->assertSame([
-			'call'   => '.foo(string $bar)',
+			'call'   => '.foo(string $bar = \'hello\')',
 			'name'   => 'foo',
 			'params' => [
 				'bar' => [
@@ -53,7 +53,7 @@ class HelpTest extends TestCase
 					'type' => 'string',
 					'required' => false,
 					'default' => 'hello',
-					'call' => 'string $bar'
+					'call' => 'string $bar = \'hello\''
 				]
 			],
 			'returns' => 'array'
@@ -66,10 +66,10 @@ class HelpTest extends TestCase
 	public function testForMethods()
 	{
 		$object = new TestObject();
-		$result = Help::forMethods($object, ['more', 'foo', 'more']);
+		$result = Help::forMethods($object, ['more', 'foo', 'more', '404']);
 		$this->assertSame([
 			'foo' => [
-				'call'   => '.foo(string $bar)',
+				'call'   => '.foo(string $bar = \'hello\')',
 				'name'   => 'foo',
 				'params' => [
 					'bar' => [
@@ -77,7 +77,7 @@ class HelpTest extends TestCase
 						'type' => 'string',
 						'required' => false,
 						'default' => 'hello',
-						'call' => 'string $bar'
+						'call' => 'string $bar = \'hello\''
 					]
 				],
 				'returns' => 'array'
@@ -98,7 +98,7 @@ class HelpTest extends TestCase
 	public function testForObjectWithInterceptedObject()
 	{
 		$object = new Page(['slug' => 'test']);
-		$result = Help::forObject($object);
+		$result = Help::for($object);
 
 		$this->assertSame('page', $result['type']);
 		$this->assertArrayHasKey('methods', $result);
@@ -118,10 +118,10 @@ class HelpTest extends TestCase
 		]);
 
 		$object = new TestObject();
-		$result = Help::forObject($object);
+		$result = Help::for($object);
 
 		$this->assertSame('Kirby\Kql\TestObject', $result['type']);
-		$this->assertCount(2, $result['methods']);
-		$this->assertSame('.foo(string $bar)', $result['methods'][0]['call']);
+		$this->assertCount(3, $result['methods']);
+		$this->assertSame('.foo(string $bar = \'hello\')', $result['methods'][0]['call']);
 	}
 }

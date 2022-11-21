@@ -42,6 +42,8 @@ class TestInterceptor extends Interceptor
 {
 	public const CLASS_ALIAS = 'test';
 
+	protected $toArray = ['more', 'foo'];
+
 	public function allowedMethods(): array
 	{
 		return [
@@ -59,6 +61,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::__construct
 	 * @covers ::__call
+	 * @covers ::forbiddenMethod
 	 */
 	public function testCall()
 	{
@@ -102,6 +105,99 @@ class InterceptorTest extends TestCase
 	{
 		$this->assertSame('Kirby\Kql\Interceptors\Kql\Test', Interceptor::class('Kirby\Kql\Test'));
 	}
+
+	/**
+	 * @covers ::isAllowedMethod
+	 */
+	public function testIsAllowedMethod()
+	{
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertTrue($interceptor->isAllowedMethod('more'));
+		$this->assertFalse($interceptor->isAllowedMethod('foo'));
+	}
+
+	/**
+	 * @covers ::isAllowedMethod
+	 */
+	public function testIsAllowedMethodWithBlockedConfig()
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['blocked' => ['Kirby\Kql\TestObject::more']]]
+			]
+		]);
+
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertFalse($interceptor->isAllowedMethod('more'));
+	}
+
+	/**
+	 * @covers ::isAllowedMethod
+	 */
+	public function testIsAllowedMethodWithAllowedConfig()
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['allowed' => ['Kirby\Kql\TestObject::foo']]]
+			]
+		]);
+
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertTrue($interceptor->isAllowedMethod('foo'));
+	}
+
+	/**
+	 * @covers ::isAllowedMethod
+	 * @covers ::isAllowedCallable
+	 */
+	public function testIsAllowedCallable()
+	{
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertTrue($interceptor->isAllowedMethod('homer'));
+	}
+
+	/**
+	 * @covers ::isAllowedMethod
+	 * @covers ::isAllowedCustomMethod
+	 * @covers ::isAllowedCallable
+	 * @covers ::method
+	 */
+	public function testIsAllowedCustomMethod()
+	{
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertFalse($interceptor->isAllowedMethod('simple'));
+
+		$object      = new TestObjectWithMethods();
+		$interceptor = new TestInterceptor($object);
+		$this->assertFalse($interceptor->isAllowedMethod('simple'));
+
+		TestObjectWithMethods::$methods = ['simple' => fn () => false];
+		$this->assertFalse($interceptor->isAllowedMethod('simple'));
+
+		$object      = new TestObjectWithMethodsAsChild();
+		$interceptor = new TestInterceptor($object);
+		$this->assertFalse($interceptor->isAllowedMethod('simple'));
+
+		TestObjectWithMethods::$methods = ['closure' => function () { return; }];
+		$this->assertFalse($interceptor->isAllowedMethod('closure'));
+
+		TestObjectWithMethods::$methods = [
+			/**
+			 * @kql-allowed
+			 */
+			'closure' => function () { return; }
+		];
+		$this->assertTrue($interceptor->isAllowedMethod('closure'));
+
+		TestObjectWithMethods::$methods = ['invalid' => 5];
+		$this->assertFalse($interceptor->isAllowedMethod('invalid'));
+	}
+
 
 	public function objectProvider()
 	{
@@ -209,10 +305,10 @@ class InterceptorTest extends TestCase
 	 * @covers ::replace
 	 * @dataProvider objectProvider
 	 */
-	public function testReplace($object, $inspector)
+	public function testReplace($object, $interceptor)
 	{
 		$result = Interceptor::replace($object);
-		$this->assertInstanceOf($inspector, $result);
+		$this->assertInstanceOf($interceptor, $result);
 	}
 
 	/**
@@ -222,8 +318,48 @@ class InterceptorTest extends TestCase
 	{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Unsupported value: string');
+		Interceptor::replace('hello');
+	}
 
-		$result = Interceptor::replace('hello');
+	/**
+	 * @covers ::replace
+	 */
+	public function testReplaceBlockedOptions()
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['classes' => ['blocked' => ['Kirby\Kql\TestOBJect']]]
+			]
+		]);
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('Access to the class "Kirby\Kql\TestObject" is blocked');
+		Interceptor::replace(new TestObject());
+	}
+
+	/**
+	 * @covers ::replace
+	 */
+	public function testReplaceObjectIsInterceptor()
+	{
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$this->assertSame($interceptor, Interceptor::replace($interceptor));
+	}
+
+	/**
+	 * @covers ::replace
+	 */
+	public function testReplaceAllowedOptions()
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['classes' => ['allowed' => ['stdClass']]]
+			]
+		]);
+
+		$object = new \stdClass();
+		$this->assertSame($object, Interceptor::replace($object));
 	}
 
 	/**
@@ -233,8 +369,20 @@ class InterceptorTest extends TestCase
 	{
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
-
 		$object = new \stdClass();
-		$result = Interceptor::replace($object);
+		Interceptor::replace($object);
+	}
+
+	/**
+	 * @covers ::toArray
+	 * @covers ::toResponse
+	 */
+	public function testToArray()
+	{
+		$object      = new TestObject();
+		$interceptor = new TestInterceptor($object);
+		$expected    = ['more' => 'no'];
+		$this->assertSame($expected, $interceptor->toArray());
+		$this->assertSame($expected, $interceptor->toResponse());
 	}
 }
