@@ -1,29 +1,9 @@
 name: CI
-on:
-  push:
-    paths:
-      - "**"
-      - "!.github/**"
-      - ".github/workflows/ci.yml"
-      - "!.vscode/**"
-      - "!**.md"
-  pull_request:
-    paths:
-      - "**"
-      - "!.github/**"
-      - ".github/workflows/ci.yml"
-      - "!.vscode/**"
-      - "!**.md"
+on: [push, pull_request]
 
 jobs:
   tests:
-    name: "Unit tests - PHP ${{ matrix.php }}"
-
-    # if on pull request, only run if from a fork
-    # (our own repo is covered by the push event)
-    if: >
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name != github.repository
+    name: PHP ${{ matrix.php }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -31,20 +11,12 @@ jobs:
       matrix:
         php: ["8.0", "8.1"]
     env:
-      extensions: mbstring, ctype, curl, gd, apcu, memcached
-      ini: apc.enabled=1, apc.enable_cli=1, pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
+      extensions: mbstring, pcov
+      ini: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
 
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
-        with:
-          fetch-depth: 2
-
-      - name: Preparations
-        run: mkdir sarif
-
-      - name: Install system locales
-        run: sudo apt-get update && sudo apt-get install -y locales-all
 
       - name: Setup PHP cache environment
         id: ext-cache
@@ -68,23 +40,33 @@ jobs:
           extensions: ${{ env.extensions }}
           ini-values: ${{ env.ini }}
           coverage: pcov
-          tools: phpunit:9.5.22, psalm:4.26.0
+          tools: phpunit:9.5.13, psalm:4.11.2
 
       - name: Setup problem matchers
         run: |
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+      - name: Get Composer cache directory
+        id: composerCache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        with:
+          path: ${{ steps.composerCache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
       - name: Cache analysis data
         id: finishPrepare
         uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
         with:
           path: ~/.cache/psalm
-          key: backend-analysis-${{ matrix.php }}
-
-      - name: Check Composer platform requirements
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: composer check-platform-reqs
+          key: backend-analysis-${{ matrix.php }}-v2
 
       - name: Run tests
         if: always() && steps.finishPrepare.outcome == 'success'
@@ -92,48 +74,29 @@ jobs:
 
       - name: Statically analyze using Psalm
         if: always() && steps.finishPrepare.outcome == 'success'
-        run: psalm --output-format=github --php-version=${{ matrix.php }} --report=sarif/psalm.sarif --report-show-info=false
+        run: psalm --output-format=github --php-version=${{ matrix.php }}
 
       # - name: Upload coverage results to Codecov
-      #   env:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     PHP: ${{ matrix.php }}
-      #   if: env.token != ''
       #   uses: codecov/codecov-action@66b3de25f6f91f65eb92c514d31d6b6f13d5ab18 # pin@v3
       #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }} # for better reliability if the GitHub API is down
-      #     fail_ci_if_error: true
-      #     files: ${{ github.workspace }}/clover.xml
+      #     file: ${{ github.workspace }}/clover.xml
       #     flags: backend
       #     env_vars: PHP
-
-      - name: Upload code scanning results to GitHub
-        if: always() && steps.finishPrepare.outcome == 'success'
-        uses: github/codeql-action/upload-sarif@7e72857c42532e0c5757d954def4bf7cb35249fa # pin@v2
-        with:
-          sarif_file: sarif
+      #   env:
+      #     PHP: ${{ matrix.php }}
 
   analysis:
-    name: "Code Quality"
-
-    # if on pull request, only run if from a fork
-    # (our own repo is covered by the push event)
-    if: >
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name != github.repository
+    name: Analysis
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
       php: "8.0"
-      extensions: mbstring, ctype, curl, gd, apcu, memcached
+      extensions: mbstring
 
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
-
-      - name: Preparations
-        run: mkdir sarif
 
       - name: Setup PHP cache environment
         id: ext-cache
@@ -141,7 +104,7 @@ jobs:
         with:
           php-version: ${{ env.php }}
           extensions: ${{ env.extensions }}
-          key: php-analysis-v1
+          key: php-v1
 
       - name: Cache PHP extensions
         uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
@@ -158,7 +121,7 @@ jobs:
           extensions: ${{ env.extensions }}
           coverage: none
           tools: |
-            composer:2.3.8, composer-normalize:2.28.3, composer-require-checker:4.1.0,
+            composer:2.3.7, composer-normalize:2.28.0,
             composer-unused:0.7.12, phpcpd:6.0.3, phpmd:2.12.0
 
       - name: Validate composer.json/composer.lock
@@ -169,31 +132,42 @@ jobs:
         if: always() && steps.finishPrepare.outcome == 'success'
         run: composer-normalize --dry-run
 
-      - name: Check for unused Composer dependencies
+      - name: Get Composer cache directory
+        id: composerCache1
         if: always() && steps.finishPrepare.outcome == 'success'
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        id: composerCache2
+        if: always() && steps.composerCache1.outcome == 'success'
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        with:
+          path: ${{ steps.composerCache1.outputs.dir }}
+          key: ${{ runner.os }}-composer-locked-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-locked-
+
+      - name: Install dependencies
+        id: composerInstall
+        if: always() && steps.composerCache2.outcome == 'success'
+        run: composer install --prefer-dist
+
+      - name: Check for unused Composer dependencies
+        if: always() && steps.composerInstall.outcome == 'success'
         run: composer-unused --no-progress
 
       - name: Check for duplicated code
-        if: always() && steps.finishPrepare.outcome == 'success'
+        if: always() && steps.composerInstall.outcome == 'success'
         run: phpcpd --fuzzy --exclude tests --exclude vendor .
 
       - name: Statically analyze using PHPMD
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: phpmd . github phpmd.xml.dist --exclude 'tests/*,vendor/*' --reportfile-sarif sarif/phpmd.sarif
-
-      - name: Upload code scanning results to GitHub
-        if: always() && steps.finishPrepare.outcome == 'success'
-        uses: github/codeql-action/upload-sarif@7e72857c42532e0c5757d954def4bf7cb35249fa # pin@v2
-        with:
-          sarif_file: sarif
+        if: always() && steps.composerInstall.outcome == 'success'
+        run: phpmd . github phpmd.xml.dist --exclude 'tests/*,vendor/*'
 
   coding-style:
-    name: "Coding Style"
+    name: Coding Style
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      php: "8.0"
 
     steps:
       - name: Checkout
@@ -202,9 +176,8 @@ jobs:
       - name: Setup PHP environment
         uses: shivammathur/setup-php@3eda58347216592f618bb1dff277810b6698e4ca # pin@v2
         with:
-          php-version: ${{ env.php }}
           coverage: none
-          tools: php-cs-fixer:3.10.0
+          tools: php-cs-fixer:3.8.0
 
       - name: Cache analysis data
         id: finishPrepare
@@ -215,6 +188,8 @@ jobs:
 
       - name: Check for PHP coding style violations
         if: always() && steps.finishPrepare.outcome == 'success'
+        env:
+          PHP_CS_FIXER_IGNORE_ENV: 1
         # Use the --dry-run flag in push builds to get a failed CI status
         run: >
           php-cs-fixer fix --diff
