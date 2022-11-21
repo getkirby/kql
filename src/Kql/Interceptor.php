@@ -89,29 +89,9 @@ abstract class Interceptor
 		throw new PermissionException('The method "' . $name . '" is not allowed in the API context');
 	}
 
-	protected function isAllowedCallable($method): bool
-	{
-		try {
-			$ref = match (true) {
-				$method instanceof Closure
-					=> new ReflectionFunction($method),
-				is_string($method) === true
-					=> new ReflectionMethod($this->object, $method),
-				default
-				=> throw new InvalidArgumentException('Invalid method')
-			};
-
-			if ($comment = $ref->getDocComment()) {
-				if (Str::contains($comment, '@kql-allowed') === true) {
-					return true;
-				}
-			}
-		} catch (Throwable) {
-		}
-
-		return false;
-	}
-
+	/**
+	 * Checks if method is allowed to call
+	 */
 	protected function isAllowedMethod($method)
 	{
 		$kirby = App::instance();
@@ -148,6 +128,33 @@ abstract class Interceptor
 		// support for custom methods with docblock comment
 		if ($this->isAllowedCustomMethod($method) === true) {
 			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if closure or object method is allowed
+	 */
+	protected function isAllowedCallable($method): bool
+	{
+		try {
+			$ref = match (true) {
+				$method instanceof Closure
+					=> new ReflectionFunction($method),
+				is_string($method) === true
+					=> new ReflectionMethod($this->object, $method),
+				default
+				=> throw new InvalidArgumentException('Invalid method')
+			};
+
+			if ($comment = $ref->getDocComment()) {
+				if (Str::contains($comment, '@kql-allowed') === true) {
+					return true;
+				}
+			}
+		} catch (Throwable) {
+			return false;
 		}
 
 		return false;

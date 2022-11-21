@@ -179,7 +179,7 @@ jobs:
 
       - name: Statically analyze using PHPMD
         if: always() && steps.finishPrepare.outcome == 'success'
-        run: phpmd . github phpmd.xml.dist --exclude 'dependencies/*,tests/*,vendor/*' --reportfile-sarif sarif/phpmd.sarif
+        run: phpmd . github phpmd.xml.dist --exclude 'tests/*,vendor/*' --reportfile-sarif sarif/phpmd.sarif
 
       - name: Upload code scanning results to GitHub
         if: always() && steps.finishPrepare.outcome == 'success'

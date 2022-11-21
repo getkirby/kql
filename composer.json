@@ -2,6 +2,7 @@
 	"name": "getkirby/kql",
 	"description": "Kirby Query Language",
 	"license": "MIT",
+	"type": "kirby-plugin",
 	"version": "1.2.0",
 	"keywords": [
 		"kirby",
@@ -11,8 +12,6 @@
 		"query",
 		"headless"
 	],
-	"homepage": "https://getkirby.com",
-	"type": "kirby-plugin",
 	"authors": [
 		{
 			"name": "Bastian Allgeier",
@@ -23,16 +22,11 @@
 			"email": "nico@getkirby.com"
 		}
 	],
+	"homepage": "https://getkirby.com",
 	"require": {
 		"php": ">=8.0.0 <8.2.0",
 		"getkirby/cms": ">=3.8.2",
 		"getkirby/composer-installer": "^1.2.1"
-	},
-	"config": {
-		"optimize-autoloader": true,
-		"allow-plugins": {
-			"getkirby/composer-installer": true
-		}
 	},
 	"autoload": {
 		"psr-4": {
@@ -41,6 +35,12 @@
 				"tests/"
 			]
 		}
+	},
+	"config": {
+		"allow-plugins": {
+			"getkirby/composer-installer": true
+		},
+		"optimize-autoloader": true
 	},
 	"extra": {
 		"installer-name": "versions",

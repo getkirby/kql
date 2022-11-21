@@ -1,8 +1,11 @@
 <?php
 
+use Kirby\Cms\Helpers;
 use Kirby\Kql\Kql;
 
-function kql($input, $model = null)
-{
-	return Kql::run($input, $model);
+if (Helpers::hasOverride('kql') === false) {
+	function kql($input, $model = null)
+	{
+		return Kql::run($input, $model);
+	}
 }
