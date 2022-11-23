@@ -23,6 +23,12 @@
 		}
 	],
 	"homepage": "https://getkirby.com",
+	"support": {
+		"email": "support@getkirby.com",
+		"issues": "https://github.com/getkirby/kql/issues",
+		"forum": "https://forum.getkirby.com",
+		"source": "https://github.com/getkirby/kql"
+	},
 	"require": {
 		"php": ">=8.0.0 <8.2.0",
 		"getkirby/cms": ">=3.8.2",
