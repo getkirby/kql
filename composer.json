@@ -3,7 +3,7 @@
 	"description": "Kirby Query Language",
 	"license": "MIT",
 	"type": "kirby-plugin",
-	"version": "1.3.0",
+	"version": "2.0.0",
 	"keywords": [
 		"kirby",
 		"cms",
