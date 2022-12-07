@@ -37,7 +37,6 @@
 	"autoload": {
 		"psr-4": {
 			"Kirby\\": [
-				"src/",
 				"tests/"
 			]
 		}
@@ -49,7 +48,7 @@
 		"optimize-autoloader": true
 	},
 	"extra": {
-		"installer-name": "versions",
+		"installer-name": "kirby",
 		"kirby-cms-path": false
 	},
 	"scripts": {
