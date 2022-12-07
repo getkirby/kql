@@ -7,7 +7,7 @@ use Kirby\Toolkit\Str;
 function autoload(string $namespace, string $dir)
 {
 	spl_autoload_register(function ($class) use ($namespace, $dir) {
-		if (str_starts_with($class, $namespace) === false) {
+		if (str_contains($class, '.') === true || str_starts_with($class, $namespace) === false) {
 			return;
 		}
 
