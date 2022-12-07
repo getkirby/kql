@@ -48,7 +48,7 @@
 		"optimize-autoloader": true
 	},
 	"extra": {
-		"installer-name": "kirby",
+		"installer-name": "kql",
 		"kirby-cms-path": false
 	},
 	"scripts": {
