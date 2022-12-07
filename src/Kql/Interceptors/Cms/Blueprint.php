@@ -2,7 +2,7 @@
 
 namespace Kirby\Kql\Interceptors\Cms;
 
-use Kirby\Kql\Interceptors\Interceptor;
+use Kirby\Kql\Interceptor;
 
 class Blueprint extends Interceptor
 {

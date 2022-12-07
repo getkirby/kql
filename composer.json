@@ -2,7 +2,8 @@
 	"name": "getkirby/kql",
 	"description": "Kirby Query Language",
 	"license": "MIT",
-	"version": "1.2.0",
+	"type": "kirby-plugin",
+	"version": "2.0.0",
 	"keywords": [
 		"kirby",
 		"cms",
@@ -11,29 +12,62 @@
 		"query",
 		"headless"
 	],
-	"homepage": "https://getkirby.com",
-	"type": "kirby-plugin",
 	"authors": [
 		{
 			"name": "Bastian Allgeier",
 			"email": "bastian@getkirby.com"
+		},
+		{
+			"name": "Nico Hoffmann",
+			"email": "nico@getkirby.com"
 		}
 	],
-	"require": {
-		"getkirby/composer-installer": "^1.2.1"
+	"homepage": "https://getkirby.com",
+	"support": {
+		"email": "support@getkirby.com",
+		"issues": "https://github.com/getkirby/kql/issues",
+		"forum": "https://forum.getkirby.com",
+		"source": "https://github.com/getkirby/kql"
 	},
-	"config": {
-		"optimize-autoloader": true,
-		"allow-plugins": {
-			"getkirby/composer-installer": false
-		}
+	"require": {
+		"php": ">=8.0.0 <8.3.0",
+		"getkirby/cms": ">=3.8.2",
+		"getkirby/composer-installer": "^1.2.1"
 	},
 	"autoload": {
 		"psr-4": {
-			"Kirby\\": "src/"
+			"Kirby\\": [
+				"tests/"
+			]
 		}
 	},
+	"config": {
+		"allow-plugins": {
+			"getkirby/composer-installer": true
+		},
+		"optimize-autoloader": true
+	},
+	"extra": {
+		"installer-name": "kql",
+		"kirby-cms-path": false
+	},
 	"scripts": {
-		"fix": "php-cs-fixer fix"
+		"analyze": [
+			"@analyze:composer",
+			"@analyze:psalm",
+			"@analyze:phpcpd",
+			"@analyze:phpmd"
+		],
+		"analyze:composer": "composer validate --strict --no-check-version --no-check-all",
+		"analyze:phpcpd": "phpcpd --fuzzy --exclude tests --exclude vendor .",
+		"analyze:phpmd": "phpmd . ansi phpmd.xml.dist --exclude 'dependencies/*,tests/*,vendor/*'",
+		"analyze:psalm": "psalm",
+		"ci": [
+			"@fix",
+			"@analyze",
+			"@test"
+		],
+		"fix": "php-cs-fixer fix",
+		"test": "phpunit --stderr --coverage-html=tests/coverage"
 	}
 }

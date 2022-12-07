@@ -1,33 +1,16 @@
 <?php
 
-@include_once __DIR__ . '/vendor/autoload.php';
+namespace Kirby\Kql;
 
-class_alias('Kirby\Kql\Kql', 'Kql');
+use Kirby\Cms\App;
 
-function kql($input, $model = null)
-{
-	return Kql::run($input, $model);
-}
+require_once __DIR__ . '/extensions/autoload.php';
 
-Kirby::plugin('getkirby/kql', [
-	'api' => [
-		'routes' => function ($kirby) {
-			return [
-				[
-					'pattern' => 'query',
-					'method'  => 'POST|GET',
-					'auth'    => $kirby->option('kql.auth') === false ? false : true,
-					'action'  => function () {
-						$result = Kql::run(get());
+autoload('Kirby\\', __DIR__ . '/src/');
 
-						return [
-							'code'   => 200,
-							'result' => $result,
-							'status' => 'ok',
-						];
-					}
-				]
-			];
-		}
-	]
+require_once __DIR__ . '/extensions/aliases.php';
+require_once __DIR__ . '/extensions/helpers.php';
+
+App::plugin('getkirby/kql', [
+	'api' => require_once 'extensions/api.php'
 ]);

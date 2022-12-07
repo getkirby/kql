@@ -2,27 +2,46 @@
 
 namespace Kirby\Kql;
 
+use Kirby\Toolkit\A;
+use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * Providing help information about
+ * queried objects, methods, arrays...
+ *
+ * @package   Kirby KQL
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      https://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   https://getkirby.com/license
+ */
 class Help
 {
-	public static function for($object)
+	/**
+	 * Provides information about passed value
+	 * depending on its type
+	 */
+	public static function for($value): array
 	{
-		if (is_array($object) === true) {
-			return static::forArray($object);
+		if (is_array($value) === true) {
+			return static::forArray($value);
 		}
 
-		if (is_object($object) === true) {
-			return static::forObject($object);
+		if (is_object($value) === true) {
+			return static::forObject($value);
 		}
 
 		return [
-			'type'  => gettype($object),
-			'value' => $object
+			'type'  => gettype($value),
+			'value' => $value
 		];
 	}
 
-	public static function forArray(array $array)
+	/**
+	 * @internal
+	 */
+	public static function forArray(array $array): array
 	{
 		return [
 			'type'  => 'array',
@@ -30,42 +49,42 @@ class Help
 		];
 	}
 
-	public static function forMethod($object, $method)
+	/**
+	 * Gathers information for method about
+	 * name, parameters, return type etc.
+	 * @internal
+	 */
+	public static function forMethod(object $object, string $method): array
 	{
 		$reflection = new ReflectionMethod($object, $method);
-		$returns    = null;
+		$returns    = $reflection->getReturnType()?->getName();
 		$params     = [];
 
-		if ($returnType = $reflection->getReturnType()) {
-			$returns = $returnType->getName();
-		}
-
 		foreach ($reflection->getParameters() as $param) {
-			$p = [
-				'name'     => $param->getName(),
-				'required' => $param->isOptional() === false,
-				'type'     => $param->hasType() ? $param->getType()->getName() : null,
-			];
+			$name     = $param->getName();
+			$required = $param->isOptional() === false;
+			$type     = $param->hasType() ? $param->getType()->getName() : null;
+			$default  = null;
 
 			if ($param->isDefaultValueAvailable()) {
-				$p['default'] = $param->getDefaultValue();
+				$default = $param->getDefaultValue();
 			}
 
-			$call = null;
+			$call = '';
 
-			if ($p['type'] !== null) {
-				$call = $p['type'] . ' ';
+			if ($type !== null) {
+				$call = $type . ' ';
 			}
 
-			$call .= '$' . $p['name'];
+			$call .= '$' . $name;
 
-			if ($p['required'] === false && isset($p['default']) === true) {
-				$call .= ' = ' . var_export($p['default'], true);
+			if ($required === false && $default !== null) {
+				$call .= ' = ' . var_export($default, true);
 			}
 
 			$p['call'] = $call;
 
-			$params[$p['name']] = $p;
+			$params[$name] = compact('name', 'type', 'required', 'default', 'call');
 		}
 
 		$call = '.' . $method;
@@ -82,7 +101,11 @@ class Help
 		];
 	}
 
-	public static function forMethods($object, $methods)
+	/**
+	 * Gathers informations for each unique method
+	 * @internal
+	 */
+	public static function forMethods(object $object, array $methods): array
 	{
 		$methods    = array_unique($methods);
 		$reflection = [];
@@ -100,11 +123,30 @@ class Help
 		return $reflection;
 	}
 
-	public static function forObject($object)
+	/**
+	 * Retrieves info for objects either from Interceptor (to
+	 * only list allowed methods) or via reflection
+	 * @internal
+	 */
+	public static function forObject(object $object): array
 	{
-		$original = $object;
-		$object   = Interceptor::replace($original);
+		// get interceptor object to only return info on allowed methods
+		$interceptor = Interceptor::replace($object);
 
-		return $object->__debugInfo();
+		if ($interceptor instanceof Interceptor) {
+			return $interceptor->__debugInfo();
+		}
+
+		// for original classes, use reflection
+		$class   = new ReflectionClass($object);
+		$methods = A::map(
+			$class->getMethods(),
+			fn ($method) => static::forMethod($object, $method->getName())
+		);
+
+		return [
+			'type'    => $class->getName(),
+			'methods' => $methods
+		];
 	}
 }

@@ -1,29 +1,13 @@
 # OS files
 .DS_Store
 
-# npm modules
+# Vendor files
 /node_modules
+/vendor
 
-# files of Composer dependencies that are not needed for the plugin
-/vendor/**/.*
-/vendor/**/*.json
-/vendor/**/*.txt
-/vendor/**/*.md
-/vendor/**/*.yml
-/vendor/**/*.yaml
-/vendor/**/*.xml
-/vendor/**/*.dist
-/vendor/**/readme.php
-/vendor/**/LICENSE
-/vendor/**/COPYING
-/vendor/**/VERSION
-/vendor/**/docs/*
-/vendor/**/example/*
-/vendor/**/examples/*
-/vendor/**/test/*
-/vendor/**/tests/*
-/vendor/**/php4/*
-/vendor/getkirby/composer-installer
-/.php_cs.cache
-/.phpunit.result.cache
+# Cache and temporary files
+/.cache
 /.php-cs-fixer.cache
+/.phpunit.result.cache
+/tests/coverage
+/tests/*/tmp

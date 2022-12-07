@@ -1,0 +1,29 @@
+# Git
+.gitattributes export-ignore
+.github/ export-ignore
+.gitignore export-ignore
+
+# Source files
+
+# Development files
+.editorconfig export-ignore
+.eslintrc.js export-ignore
+.prettierrc.json export-ignore
+composer.lock export-ignore
+package-lock.json export-ignore
+package.json export-ignore
+
+# Screenshots
+screenshot.png export-ignore
+
+# Tests
+.codecov.yml export-ignore
+.composer-require-checker.json export-ignore
+.composer-require-checker.json export-ignore
+.php-cs-fixer.dist.php export-ignore
+phpmd.xml.dist export-ignore
+phpunit.xml.dist export-ignore
+psalm.xml.dist export-ignore
+etc/ export-ignore
+stubs/ export-ignore
+tests/ export-ignore
