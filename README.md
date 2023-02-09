@@ -936,7 +936,7 @@ If you want to fully allow access to an entire class without putting an intercep
 return [
   'kql' => [
     'classes' => [
-      'allow' => [
+      'allowed' => [
         'Kirby\Cms\System'
       ]
     ]
