@@ -116,7 +116,7 @@ return [
 
 ### Sending POST Requests
 
-You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [the `fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and JavaScript to retreive data from our Kirby installation.
+You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [the `fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and JavaScript to retrieve data from our Kirby installation.
 
 ```js
 const api = "https://yoursite.com/api/query";
