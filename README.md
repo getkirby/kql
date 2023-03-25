@@ -116,22 +116,22 @@ return [
 
 ### Sending POST Requests
 
-You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [ohmyfetch](https://github.com/unjs/ohmyfetch) (a better fetch API for Node and the browser) and JavaScript to retreive data from our Kirby installation.
+You can use any HTTP request library in your language of choice to make regular POST requests to your `/api/query` endpoint. In this example, we are using [the `fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and JavaScript to retrieve data from our Kirby installation.
 
 ```js
-import { $fetch } from "ohmyfetch";
-
 const api = "https://yoursite.com/api/query";
 const username = "apiuser";
 const password = "strong-secret-api-password";
 
 const headers = {
-  Authorization: Buffer.from(`${username}:${password}`).toString("base64"),
+  Authorization: "Basic " + Buffer.from(`${username}:${password}`).toString("base64"),
+  "Content-Type": "application/json",
+  Accept: "application/json",
 };
 
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('notes').children",
     select: {
       title: true,
@@ -139,11 +139,13 @@ const response = await $fetch(api, {
       slug: true,
       date: "page.date.toDate('d.m.Y')",
     },
-  },
+  }),
   headers,
 });
 
-console.log(response);
+const json = await response.json();
+
+console.log(json);
 ```
 
 ### `query`
