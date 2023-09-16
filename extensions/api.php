@@ -11,10 +11,13 @@ return [
 				'auth'    => $kirby->option('kql.auth') === false ? false : true,
 				'action'  => function () use ($kirby) {
 					// set the Kirby language in multilanguage sites
-                    $languageCode = $kirby->request()->header('X-Language');
-                    if ($kirby->multilang() && $languageCode) {
-                        $kirby->setCurrentLanguage($languageCode);
-                    }
+					$languageCode = $kirby->request()->header('X-Language');
+					if (
+						$kirby->multilang() === true &&
+						is_string($languageCode) === true
+					) {
+						$kirby->setCurrentLanguage($languageCode);
+					}
 					
 					$input = $kirby->request()->get();
 					$result = Kql::run($input);
