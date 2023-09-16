@@ -10,8 +10,7 @@ return [
 				'method'  => 'POST|GET',
 				'auth'    => $kirby->option('kql.auth') === false ? false : true,
 				'action'  => function () use ($kirby) {
-
-					// Set the Kirby language in multilanguage sites
+					// set the Kirby language in multilanguage sites
                     $languageCode = $kirby->request()->header('X-Language');
                     if ($kirby->multilang() && $languageCode) {
                         $kirby->setCurrentLanguage($languageCode);
