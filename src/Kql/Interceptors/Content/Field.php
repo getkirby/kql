@@ -1,6 +1,6 @@
 <?php
 
-namespace Kirby\Kql\Interceptors\Cms;
+namespace Kirby\Kql\Interceptors\Content;
 
 use Kirby\Kql\Interceptor;
 
