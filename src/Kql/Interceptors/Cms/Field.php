@@ -2,8 +2,8 @@
 
 namespace Kirby\Kql\Interceptors\Cms;
 
-use Kirby\Kql\Interceptors\Content\Field as _Field;
+use Kirby\Kql\Interceptors\Content\Field as CurrentField;
 
-class Field extends _Field
+class Field extends CurrentField
 {
 }

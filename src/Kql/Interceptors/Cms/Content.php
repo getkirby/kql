@@ -2,8 +2,8 @@
 
 namespace Kirby\Kql\Interceptors\Cms;
 
-use Kirby\Kql\Interceptors\Content\Content as _Content;
+use Kirby\Kql\Interceptors\Content\Content as CurrentContent;
 
-class Content extends _Content
+class Content extends CurrentContent
 {
 }
