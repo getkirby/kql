@@ -143,9 +143,7 @@ const response = await fetch(api, {
   headers,
 });
 
-const json = await response.json();
-
-console.log(json);
+console.log(await response.json());
 ```
 
 ### `query`
@@ -159,15 +157,15 @@ When you don't pass the select option, Kirby will try to come up with the most u
 ##### Fetching the Site Title
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.title",
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -186,15 +184,15 @@ console.log(response);
 ##### Fetching a List of Page IDs
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.children",
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -221,15 +219,15 @@ console.log(response);
 Queries can even execute field methods.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.title.upper",
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -254,16 +252,16 @@ KQL becomes really powerful by its flexible way to control the result set with t
 To include a property or field in your results, list them as an array. Check out our [reference for available properties](https://getkirby.com/docs/reference) for pages, users, files, etc.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.children",
     select: ["title", "url"],
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -312,19 +310,19 @@ console.log(response);
 You can also use the object notation and pass true for each key/property you want to include.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.children",
     select: {
       title: true,
       url: true,
     },
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -369,18 +367,18 @@ console.log(response);
 Instead of passing true, you can also pass a string query to specify what you want to return for each key in your select object.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.children",
     select: {
       title: "page.title",
     },
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -410,18 +408,18 @@ console.log(response);
 #### Executing Field Methods
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site.children",
     select: {
       title: "page.title.upper",
     },
-  },
+  }),
   headers,
 });
 
-console.log(response);
+console.log(await response.json());
 ```
 
 <details>
@@ -453,9 +451,9 @@ console.log(response);
 String queries are a perfect way to create aliases or return variations of the same field or property multiple times.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('notes').children",
     select: {
       title: "page.title",
@@ -465,9 +463,11 @@ const response = await $fetch(api, {
       date: "page.date.toDate('d.m.Y')",
       timestamp: "page.date.toTimestamp",
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 <details>
@@ -503,17 +503,19 @@ const response = await $fetch(api, {
 With such string queries you can of course also include nested data
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('photography').children",
     select: {
       title: "page.title",
       images: "page.images",
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 <details>
@@ -551,9 +553,9 @@ const response = await $fetch(api, {
 You can also pass an object with a `query` and a `select` option
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('photography').children",
     select: {
       title: "page.title",
@@ -564,9 +566,11 @@ const response = await $fetch(api, {
         },
       },
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 <details>
@@ -618,9 +622,9 @@ Whenever you query a collection (pages, files, users, roles, languages) you can 
 You can specify a custom limit with the limit option. The default limit for collections is 100 entries.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('notes').children",
     pagination: {
       limit: 5,
@@ -628,9 +632,11 @@ const response = await $fetch(api, {
     select: {
       title: "page.title",
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 <details>
@@ -676,9 +682,9 @@ const response = await $fetch(api, {
 You can jump to any page in the resultset with the `page` option.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('notes').children",
     pagination: {
       page: 2,
@@ -687,9 +693,11 @@ const response = await $fetch(api, {
     select: {
       title: "page.title",
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 <details>
@@ -726,9 +734,9 @@ const response = await $fetch(api, {
 Pagination settings also work for subqueries.
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "page('photography').children",
     select: {
       title: "page.title",
@@ -743,9 +751,11 @@ const response = await $fetch(api, {
         },
       },
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 ### Multiple Queries in a Single Call
@@ -753,9 +763,9 @@ const response = await $fetch(api, {
 With the power of selects and subqueries you can basically query the entire site in a single request
 
 ```js
-const response = await $fetch(api, {
+const response = await fetch(api, {
   method: "post",
-  body: {
+  body: JSON.stringify({
     query: "site",
     select: {
       title: "site.title",
@@ -787,9 +797,11 @@ const response = await $fetch(api, {
         text: "page.text.kirbytext",
       },
     },
-  },
+  }),
   headers,
 });
+
+console.log(await response.json());
 ```
 
 ### Allowing Methods
@@ -954,7 +966,8 @@ KQL only offers access to data in your site. It does not support any mutations. 
 
 ## Plugins
 
-- [nuxt-kql](https://nuxt-kql.jhnn.dev): A Nuxt 3 module for KQL.
+- [KQL + 11ty](https://github.com/getkirby/eleventykit)
+- [KQL + Nuxt](https://nuxt-kql.jhnn.dev)
 
 ## What's Kirby?
 - **[getkirby.com](https://getkirby.com)** – Get to know the CMS.
@@ -971,4 +984,4 @@ KQL only offers access to data in your site. It does not support any mutations. 
 
 ## License
 
-[MIT](./LICENSE) License © 2020-2022 [Bastian Allgeier](https://getkirby.com)
+[MIT](./LICENSE) License © 2020-2023 [Bastian Allgeier](https://getkirby.com)
