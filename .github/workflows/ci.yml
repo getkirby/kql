@@ -9,14 +9,14 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        php: ["8.0", "8.1"]
+        php: ["8.1", "8.2", "8.3"]
     env:
       extensions: mbstring, pcov
       ini: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # pin@v3
 
       - name: Setup PHP cache environment
         id: ext-cache
@@ -27,20 +27,20 @@ jobs:
           key: php-v1
 
       - name: Cache PHP extensions
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ${{ steps.ext-cache.outputs.dir }}
           key: ${{ steps.ext-cache.outputs.key }}
           restore-keys: ${{ steps.ext-cache.outputs.key }}
 
       - name: Setup PHP environment
-        uses: shivammathur/setup-php@3eda58347216592f618bb1dff277810b6698e4ca # pin@v2
+        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d # pin@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ env.extensions }}
           ini-values: ${{ env.ini }}
           coverage: pcov
-          tools: phpunit:9.5.13, psalm:4.11.2
+          tools: phpunit:10.5.5, psalm:5.20.0
 
       - name: Setup problem matchers
         run: |
@@ -52,7 +52,7 @@ jobs:
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ${{ steps.composerCache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -63,7 +63,7 @@ jobs:
 
       - name: Cache analysis data
         id: finishPrepare
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ~/.cache/psalm
           key: backend-analysis-${{ matrix.php }}-v2
@@ -91,12 +91,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      php: "8.0"
+      php: "8.2"
       extensions: mbstring
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # pin@v3
 
       - name: Setup PHP cache environment
         id: ext-cache
@@ -107,7 +107,7 @@ jobs:
           key: php-v1
 
       - name: Cache PHP extensions
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ${{ steps.ext-cache.outputs.dir }}
           key: ${{ steps.ext-cache.outputs.key }}
@@ -115,7 +115,7 @@ jobs:
 
       - name: Setup PHP environment
         id: finishPrepare
-        uses: shivammathur/setup-php@3eda58347216592f618bb1dff277810b6698e4ca # pin@v2
+        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d # pin@v2
         with:
           php-version: ${{ env.php }}
           extensions: ${{ env.extensions }}
@@ -140,7 +140,7 @@ jobs:
       - name: Cache dependencies
         id: composerCache2
         if: always() && steps.composerCache1.outcome == 'success'
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ${{ steps.composerCache1.outputs.dir }}
           key: ${{ runner.os }}-composer-locked-${{ hashFiles('**/composer.lock') }}
@@ -171,17 +171,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # pin@v3
 
       - name: Setup PHP environment
-        uses: shivammathur/setup-php@3eda58347216592f618bb1dff277810b6698e4ca # pin@v2
+        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d # pin@v2
         with:
           coverage: none
           tools: php-cs-fixer:3.8.0
 
       - name: Cache analysis data
         id: finishPrepare
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # pin@v3
         with:
           path: ~/.php-cs-fixer
           key: coding-style
