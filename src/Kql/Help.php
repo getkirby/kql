@@ -57,13 +57,13 @@ class Help
 	public static function forMethod(object $object, string $method): array
 	{
 		$reflection = new ReflectionMethod($object, $method);
-		$returns    = $reflection->getReturnType()?->getName();
+		$returns    = $reflection->getReturnType() ? (string)$reflection->getReturnType(): null;
 		$params     = [];
 
 		foreach ($reflection->getParameters() as $param) {
 			$name     = $param->getName();
 			$required = $param->isOptional() === false;
-			$type     = $param->hasType() ? $param->getType()->getName() : null;
+			$type     = $param->hasType() ? (string)$param->getType() : null;
 			$default  = null;
 
 			if ($param->isDefaultValueAvailable()) {

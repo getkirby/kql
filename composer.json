@@ -3,7 +3,7 @@
 	"description": "Kirby Query Language",
 	"license": "MIT",
 	"type": "kirby-plugin",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"keywords": [
 		"kirby",
 		"cms",
@@ -30,8 +30,7 @@
 		"source": "https://github.com/getkirby/kql"
 	},
 	"require": {
-		"php": ">=8.0.0 <8.3.0",
-		"getkirby/cms": ">=3.8.2",
+		"getkirby/cms": "^3.10.0 || ^4.0 || ^5.0",
 		"getkirby/composer-installer": "^1.2.1"
 	},
 	"autoload": {
