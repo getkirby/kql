@@ -10,7 +10,7 @@ class Version extends Interceptor
 
 	protected $toArray = [
 		'content',
-		'id',	
+		'id',
 		'exists',
 		'isLatest',
 		'lock',
@@ -21,7 +21,7 @@ class Version extends Interceptor
 	{
 		return [
 			'content',
-			'id',	
+			'id',
 			'exists',
 			'isLatest',
 			'isLocked',

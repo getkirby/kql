@@ -15,7 +15,7 @@ class VersionId extends Interceptor
 	public function allowedMethods(): array
 	{
 		return [
-			'is',	
+			'is',
 			'value'
 		];
 	}
