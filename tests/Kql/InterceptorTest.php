@@ -2,7 +2,6 @@
 
 namespace Kirby\Kql;
 
-use stdClass;
 use Kirby\Cms\App;
 use Kirby\Cms\Blueprint;
 use Kirby\Cms\Content;
@@ -19,6 +18,7 @@ use Kirby\Cms\User;
 use Kirby\Cms\UserBlueprint;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
+use stdClass;
 
 class AppExtended extends App
 {
