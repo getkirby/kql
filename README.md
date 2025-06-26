@@ -967,7 +967,7 @@ KQL only offers access to data in your site. It does not support any mutations. 
 ## Plugins
 
 - [KQL + 11ty](https://github.com/getkirby/eleventykit)
-- [KQL + Nuxt](https://nuxt-kql.jhnn.dev)
+- [KQL + Nuxt](https://github.com/johannschopplich/cacao-kit-frontend)
 
 ## What's Kirby?
 - **[getkirby.com](https://getkirby.com)** – Get to know the CMS.

@@ -76,6 +76,7 @@ class Model extends Interceptor
 			'permalink',
 			'previewUrl',
 			'url',
+			'version'
 		];
 	}
 
