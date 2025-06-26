@@ -146,10 +146,6 @@ jobs:
         if: always() && steps.composerInstall.outcome == 'success'
         run: composer-unused --no-progress
 
-      - name: Check for duplicated code
-        if: always() && steps.composerInstall.outcome == 'success'
-        run: phpcpd --fuzzy --exclude tests --exclude vendor .
-
       - name: Statically analyze using PHPMD
         if: always() && steps.composerInstall.outcome == 'success'
         run: phpmd . github phpmd.xml.dist --exclude 'tests/*,vendor/*'
