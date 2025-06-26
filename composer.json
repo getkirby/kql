@@ -33,9 +33,6 @@
 		"getkirby/cms": "^3.10.0 || ^4.0 || ^5.0",
 		"getkirby/composer-installer": "^1.2.1"
 	},
-	"require-dev": {
-		"rector/rector": "^2.1"
-	},
 	"autoload": {
 		"psr-4": {
 			"Kirby\\": [
