@@ -68,5 +68,8 @@
 		],
 		"fix": "php-cs-fixer fix",
 		"test": "phpunit --stderr --coverage-html=tests/coverage"
+	},
+	"require-dev": {
+		"rector/rector": "^2.1"
 	}
 }

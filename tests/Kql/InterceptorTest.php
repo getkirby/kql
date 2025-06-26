@@ -2,6 +2,7 @@
 
 namespace Kirby\Kql;
 
+use stdClass;
 use Kirby\Cms\App;
 use Kirby\Cms\Blueprint;
 use Kirby\Cms\Content;
@@ -63,7 +64,7 @@ class InterceptorTest extends TestCase
 	 * @covers ::__call
 	 * @covers ::forbiddenMethod
 	 */
-	public function testCall()
+	public function testCall(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -77,7 +78,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::__debugInfo
 	 */
-	public function testDebugInfo()
+	public function testDebugInfo(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -91,7 +92,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::allowedMethods
 	 */
-	public function testAllowedMethods()
+	public function testAllowedMethods(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -101,7 +102,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::class
 	 */
-	public function testClass()
+	public function testClass(): void
 	{
 		$this->assertSame('Kirby\Kql\Interceptors\Kql\Test', Interceptor::class('Kirby\Kql\Test'));
 	}
@@ -109,7 +110,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::isAllowedMethod
 	 */
-	public function testIsAllowedMethod()
+	public function testIsAllowedMethod(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -120,7 +121,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::isAllowedMethod
 	 */
-	public function testIsAllowedMethodWithBlockedConfig()
+	public function testIsAllowedMethodWithBlockedConfig(): void
 	{
 		$this->app->clone([
 			'options' => [
@@ -136,7 +137,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::isAllowedMethod
 	 */
-	public function testIsAllowedMethodWithAllowedConfig()
+	public function testIsAllowedMethodWithAllowedConfig(): void
 	{
 		$this->app->clone([
 			'options' => [
@@ -153,7 +154,7 @@ class InterceptorTest extends TestCase
 	 * @covers ::isAllowedMethod
 	 * @covers ::isAllowedCallable
 	 */
-	public function testIsAllowedCallable()
+	public function testIsAllowedCallable(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -166,7 +167,7 @@ class InterceptorTest extends TestCase
 	 * @covers ::isAllowedCallable
 	 * @covers ::method
 	 */
-	public function testIsAllowedCustomMethod()
+	public function testIsAllowedCustomMethod(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -307,7 +308,7 @@ class InterceptorTest extends TestCase
 	 * @covers ::replace
 	 * @dataProvider objectProvider
 	 */
-	public function testReplace($object, $interceptor)
+	public function testReplace($object, $interceptor): void
 	{
 		$result = Interceptor::replace($object);
 		$this->assertInstanceOf($interceptor, $result);
@@ -316,7 +317,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::replace
 	 */
-	public function testReplaceNonObject()
+	public function testReplaceNonObject(): void
 	{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Unsupported value: string');
@@ -326,7 +327,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::replace
 	 */
-	public function testReplaceBlockedOptions()
+	public function testReplaceBlockedOptions(): void
 	{
 		$this->app->clone([
 			'options' => [
@@ -342,7 +343,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::replace
 	 */
-	public function testReplaceObjectIsInterceptor()
+	public function testReplaceObjectIsInterceptor(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
@@ -352,7 +353,7 @@ class InterceptorTest extends TestCase
 	/**
 	 * @covers ::replace
 	 */
-	public function testReplaceAllowedOptions()
+	public function testReplaceAllowedOptions(): void
 	{
 		$this->app->clone([
 			'options' => [
@@ -360,18 +361,18 @@ class InterceptorTest extends TestCase
 			]
 		]);
 
-		$object = new \stdClass();
+		$object = new stdClass();
 		$this->assertSame($object, Interceptor::replace($object));
 	}
 
 	/**
 	 * @covers ::replace
 	 */
-	public function testReplaceUnknownObject()
+	public function testReplaceUnknownObject(): void
 	{
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
-		$object = new \stdClass();
+		$object = new stdClass();
 		Interceptor::replace($object);
 	}
 
@@ -379,7 +380,7 @@ class InterceptorTest extends TestCase
 	 * @covers ::toArray
 	 * @covers ::toResponse
 	 */
-	public function testToArray()
+	public function testToArray(): void
 	{
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);

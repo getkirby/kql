@@ -12,7 +12,7 @@ class QueryTest extends TestCase
 	/**
 	 * @covers ::intercept
 	 */
-	public function testIntercept()
+	public function testIntercept(): void
 	{
 		// non-object
 		$query = new Query('foo.bar');

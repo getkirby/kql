@@ -14,7 +14,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::fetch
 	 */
-	public function testFetch()
+	public function testFetch(): void
 	{
 		$object = new TestObject();
 		$result = Kql::fetch($object, 'more', true);
@@ -32,7 +32,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::help
 	 */
-	public function testHelp()
+	public function testHelp(): void
 	{
 		$result = Kql::help('foo');
 		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
@@ -41,7 +41,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::query
 	 */
-	public function testQuery()
+	public function testQuery(): void
 	{
 		$result = Kql::run([
 			'query'  => 'site.children',
@@ -60,7 +60,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::render
 	 */
-	public function testRender()
+	public function testRender(): void
 	{
 		// non-object: returns value directly
 		$result = Kql::render('foo');
@@ -75,7 +75,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::render
 	 */
-	public function testRenderOriginalObject()
+	public function testRenderOriginalObject(): void
 	{
 		$this->app->clone([
 			'options' => [
@@ -99,7 +99,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::run
 	 */
-	public function testRun()
+	public function testRun(): void
 	{
 		$result   = Kql::run('site.title');
 		$expected = 'Test Site';
@@ -115,7 +115,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::run
 	 */
-	public function testRunInvalidQuery()
+	public function testRunInvalidQuery(): void
 	{
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('The query must be a string');
@@ -125,7 +125,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::run
 	 */
-	public function testRunForbiddenMethod()
+	public function testRunForbiddenMethod(): void
 	{
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
@@ -135,7 +135,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::select
 	 */
-	public function testSelect()
+	public function testSelect(): void
 	{
 		// no select, returns data via ::render
 		$result = Kql::select('foo');
@@ -149,7 +149,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::select
 	 */
-	public function testSelectWithAlias()
+	public function testSelectWithAlias(): void
 	{
 		$result = Kql::run([
 			'select' => [
@@ -164,7 +164,7 @@ class KqlTest extends TestCase
 	 * @covers ::select
 	 * @covers ::selectFromArray
 	 */
-	public function testSelectFromArray()
+	public function testSelectFromArray(): void
 	{
 		$data = [
 			'title' => 'Test Site',
@@ -182,7 +182,7 @@ class KqlTest extends TestCase
 	 * @covers ::select
 	 * @covers ::selectFromCollection
 	 */
-	public function testSelectFromCollection()
+	public function testSelectFromCollection(): void
 	{
 		$result = Kql::run([
 			'select' => [
@@ -202,7 +202,7 @@ class KqlTest extends TestCase
 	 * @covers ::select
 	 * @covers ::selectFromObject
 	 */
-	public function testSelectFromObject()
+	public function testSelectFromObject(): void
 	{
 		$result = Kql::run([
 			'select' => [
@@ -219,7 +219,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::select
 	 */
-	public function testSelectWithBoolean()
+	public function testSelectWithBoolean(): void
 	{
 		$result = Kql::run([
 			'select' => [
@@ -239,7 +239,7 @@ class KqlTest extends TestCase
 	 * @covers ::selectFromCollection
 	 * @covers ::selectFromObject
 	 */
-	public function testSelectWithQuery()
+	public function testSelectWithQuery(): void
 	{
 		$result = Kql::run([
 			'select' => [
@@ -270,7 +270,7 @@ class KqlTest extends TestCase
 	/**
 	 * @covers ::select
 	 */
-	public function testSelectWithString()
+	public function testSelectWithString(): void
 	{
 		$result = Kql::run([
 			'select' => [
