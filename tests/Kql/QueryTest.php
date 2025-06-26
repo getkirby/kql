@@ -3,15 +3,11 @@
 namespace Kirby\Kql;
 
 use Kirby\Exception\PermissionException;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @coversDefaultClass \Kirby\Kql\Query
- */
+#[CoversClass(\Kirby\Kql\Query::class)]
 class QueryTest extends TestCase
 {
-	/**
-	 * @covers ::intercept
-	 */
 	public function testIntercept(): void
 	{
 		// non-object

@@ -3,15 +3,11 @@
 namespace Kirby\Kql;
 
 use Kirby\Cms\Page;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @coversDefaultClass \Kirby\Kql\Help
- */
+#[CoversClass(\Kirby\Kql\Help::class)]
 class HelpTest extends TestCase
 {
-	/**
-	 * @covers ::for
-	 */
 	public function testFor(): void
 	{
 		$result = Help::for('foo');
@@ -27,19 +23,12 @@ class HelpTest extends TestCase
 		$this->assertSame(['type' => 'boolean', 'value' => false], $result);
 	}
 
-	/**
-	 * @covers ::for
-	 * @covers ::forArray
-	 */
 	public function testForArray(): void
 	{
 		$result = Help::for(['foo' => 'bar', 'kirby' => 'cms']);
 		$this->assertSame(['type' => 'array', 'keys' => ['foo', 'kirby']], $result);
 	}
 
-	/**
-	 * @covers ::forMethod
-	 */
 	public function testForMethod(): void
 	{
 		$object = new TestObject();
@@ -60,9 +49,6 @@ class HelpTest extends TestCase
 		], $result);
 	}
 
-	/**
-	 * @covers ::forMethods
-	 */
 	public function testForMethods(): void
 	{
 		$object = new TestObject();
@@ -91,10 +77,6 @@ class HelpTest extends TestCase
 		], $result);
 	}
 
-	/**
-	 * @covers ::for
-	 * @covers ::forObject
-	 */
 	public function testForObjectWithInterceptedObject(): void
 	{
 		$object = new Page(['slug' => 'test']);
@@ -105,10 +87,6 @@ class HelpTest extends TestCase
 		$this->assertArrayHasKey('value', $result);
 	}
 
-	/**
-	 * @covers ::for
-	 * @covers ::forObject
-	 */
 	public function testForObjectWithOriginalObject(): void
 	{
 		$this->app->clone([

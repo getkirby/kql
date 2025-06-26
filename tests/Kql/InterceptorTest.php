@@ -18,6 +18,8 @@ use Kirby\Cms\User;
 use Kirby\Cms\UserBlueprint;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 class AppExtended extends App
@@ -54,16 +56,9 @@ class TestInterceptor extends Interceptor
 }
 
 
-/**
- * @coversDefaultClass \Kirby\Kql\Interceptor
- */
+#[CoversClass(\Kirby\Kql\Interceptor::class)]
 class InterceptorTest extends TestCase
 {
-	/**
-	 * @covers ::__construct
-	 * @covers ::__call
-	 * @covers ::forbiddenMethod
-	 */
 	public function testCall(): void
 	{
 		$object      = new TestObject();
@@ -75,9 +70,6 @@ class InterceptorTest extends TestCase
 		$interceptor->foo('test');
 	}
 
-	/**
-	 * @covers ::__debugInfo
-	 */
 	public function testDebugInfo(): void
 	{
 		$object      = new TestObject();
@@ -89,9 +81,6 @@ class InterceptorTest extends TestCase
 		$this->assertArrayHasKey('value', $result);
 	}
 
-	/**
-	 * @covers ::allowedMethods
-	 */
 	public function testAllowedMethods(): void
 	{
 		$object      = new TestObject();
@@ -99,17 +88,11 @@ class InterceptorTest extends TestCase
 		$this->assertSame(['more'], $interceptor->allowedMethods());
 	}
 
-	/**
-	 * @covers ::class
-	 */
 	public function testClass(): void
 	{
 		$this->assertSame('Kirby\Kql\Interceptors\Kql\Test', Interceptor::class('Kirby\Kql\Test'));
 	}
 
-	/**
-	 * @covers ::isAllowedMethod
-	 */
 	public function testIsAllowedMethod(): void
 	{
 		$object      = new TestObject();
@@ -118,9 +101,6 @@ class InterceptorTest extends TestCase
 		$this->assertFalse($interceptor->isAllowedMethod('foo'));
 	}
 
-	/**
-	 * @covers ::isAllowedMethod
-	 */
 	public function testIsAllowedMethodWithBlockedConfig(): void
 	{
 		$this->app->clone([
@@ -134,9 +114,6 @@ class InterceptorTest extends TestCase
 		$this->assertFalse($interceptor->isAllowedMethod('more'));
 	}
 
-	/**
-	 * @covers ::isAllowedMethod
-	 */
 	public function testIsAllowedMethodWithAllowedConfig(): void
 	{
 		$this->app->clone([
@@ -150,10 +127,6 @@ class InterceptorTest extends TestCase
 		$this->assertTrue($interceptor->isAllowedMethod('foo'));
 	}
 
-	/**
-	 * @covers ::isAllowedMethod
-	 * @covers ::isAllowedCallable
-	 */
 	public function testIsAllowedCallable(): void
 	{
 		$object      = new TestObject();
@@ -161,12 +134,6 @@ class InterceptorTest extends TestCase
 		$this->assertTrue($interceptor->isAllowedMethod('homer'));
 	}
 
-	/**
-	 * @covers ::isAllowedMethod
-	 * @covers ::isAllowedCustomMethod
-	 * @covers ::isAllowedCallable
-	 * @covers ::method
-	 */
 	public function testIsAllowedCustomMethod(): void
 	{
 		$object      = new TestObject();
@@ -200,7 +167,6 @@ class InterceptorTest extends TestCase
 		TestObjectWithMethods::$methods = ['invalid' => 5];
 		$this->assertFalse($interceptor->isAllowedMethod('invalid'));
 	}
-
 
 	public function objectProvider()
 	{
@@ -304,19 +270,13 @@ class InterceptorTest extends TestCase
 		];
 	}
 
-	/**
-	 * @covers ::replace
-	 * @dataProvider objectProvider
-	 */
+	#[DataProvider('objectProvider')]
 	public function testReplace($object, $interceptor): void
 	{
 		$result = Interceptor::replace($object);
 		$this->assertInstanceOf($interceptor, $result);
 	}
 
-	/**
-	 * @covers ::replace
-	 */
 	public function testReplaceNonObject(): void
 	{
 		$this->expectException(InvalidArgumentException::class);
@@ -324,9 +284,6 @@ class InterceptorTest extends TestCase
 		Interceptor::replace('hello');
 	}
 
-	/**
-	 * @covers ::replace
-	 */
 	public function testReplaceBlockedOptions(): void
 	{
 		$this->app->clone([
@@ -340,9 +297,6 @@ class InterceptorTest extends TestCase
 		Interceptor::replace(new TestObject());
 	}
 
-	/**
-	 * @covers ::replace
-	 */
 	public function testReplaceObjectIsInterceptor(): void
 	{
 		$object      = new TestObject();
@@ -350,9 +304,6 @@ class InterceptorTest extends TestCase
 		$this->assertSame($interceptor, Interceptor::replace($interceptor));
 	}
 
-	/**
-	 * @covers ::replace
-	 */
 	public function testReplaceAllowedOptions(): void
 	{
 		$this->app->clone([
@@ -365,9 +316,6 @@ class InterceptorTest extends TestCase
 		$this->assertSame($object, Interceptor::replace($object));
 	}
 
-	/**
-	 * @covers ::replace
-	 */
 	public function testReplaceUnknownObject(): void
 	{
 		$this->expectException(PermissionException::class);
@@ -376,10 +324,6 @@ class InterceptorTest extends TestCase
 		Interceptor::replace($object);
 	}
 
-	/**
-	 * @covers ::toArray
-	 * @covers ::toResponse
-	 */
 	public function testToArray(): void
 	{
 		$object      = new TestObject();

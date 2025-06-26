@@ -5,15 +5,11 @@ namespace Kirby\Kql;
 use Exception;
 use Kirby\Cms\Page;
 use Kirby\Exception\PermissionException;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @coversDefaultClass \Kirby\Kql\Kql
- */
+#[CoversClass(\Kirby\Kql\Kql::class)]
 class KqlTest extends TestCase
 {
-	/**
-	 * @covers ::fetch
-	 */
 	public function testFetch(): void
 	{
 		$object = new TestObject();
@@ -29,18 +25,12 @@ class KqlTest extends TestCase
 		$this->assertSame('test', $result);
 	}
 
-	/**
-	 * @covers ::help
-	 */
 	public function testHelp(): void
 	{
 		$result = Kql::help('foo');
 		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
 	}
 
-	/**
-	 * @covers ::query
-	 */
 	public function testQuery(): void
 	{
 		$result = Kql::run([
@@ -57,9 +47,6 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
-	/**
-	 * @covers ::render
-	 */
 	public function testRender(): void
 	{
 		// non-object: returns value directly
@@ -72,9 +59,6 @@ class KqlTest extends TestCase
 		$this->assertIsArray($result);
 	}
 
-	/**
-	 * @covers ::render
-	 */
 	public function testRenderOriginalObject(): void
 	{
 		$this->app->clone([
@@ -96,9 +80,6 @@ class KqlTest extends TestCase
 		Kql::render($object);
 	}
 
-	/**
-	 * @covers ::run
-	 */
 	public function testRun(): void
 	{
 		$result   = Kql::run('site.title');
@@ -112,9 +93,6 @@ class KqlTest extends TestCase
 		$this->assertSame(['title' => $expected], $result);
 	}
 
-	/**
-	 * @covers ::run
-	 */
 	public function testRunInvalidQuery(): void
 	{
 		$this->expectException(Exception::class);
@@ -122,9 +100,6 @@ class KqlTest extends TestCase
 		Kql::run(['query' => false]);
 	}
 
-	/**
-	 * @covers ::run
-	 */
 	public function testRunForbiddenMethod(): void
 	{
 		$this->expectException(PermissionException::class);
@@ -132,9 +107,6 @@ class KqlTest extends TestCase
 		Kql::run('site.children.first.delete');
 	}
 
-	/**
-	 * @covers ::select
-	 */
 	public function testSelect(): void
 	{
 		// no select, returns data via ::render
@@ -146,9 +118,6 @@ class KqlTest extends TestCase
 		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
 	}
 
-	/**
-	 * @covers ::select
-	 */
 	public function testSelectWithAlias(): void
 	{
 		$result = Kql::run([
@@ -160,10 +129,6 @@ class KqlTest extends TestCase
 		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
-	/**
-	 * @covers ::select
-	 * @covers ::selectFromArray
-	 */
 	public function testSelectFromArray(): void
 	{
 		$data = [
@@ -178,10 +143,6 @@ class KqlTest extends TestCase
 		$this->assertSame(['title' => 'Test Site'], $result);
 	}
 
-	/**
-	 * @covers ::select
-	 * @covers ::selectFromCollection
-	 */
 	public function testSelectFromCollection(): void
 	{
 		$result = Kql::run([
@@ -198,10 +159,6 @@ class KqlTest extends TestCase
 		$this->assertSame(2, $result['children']['pagination']['limit']);
 	}
 
-	/**
-	 * @covers ::select
-	 * @covers ::selectFromObject
-	 */
 	public function testSelectFromObject(): void
 	{
 		$result = Kql::run([
@@ -216,9 +173,6 @@ class KqlTest extends TestCase
 		$this->assertSame('/about', $result['test']['url']);
 	}
 
-	/**
-	 * @covers ::select
-	 */
 	public function testSelectWithBoolean(): void
 	{
 		$result = Kql::run([
@@ -234,11 +188,6 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
-	/**
-	 * @covers ::select
-	 * @covers ::selectFromCollection
-	 * @covers ::selectFromObject
-	 */
 	public function testSelectWithQuery(): void
 	{
 		$result = Kql::run([
@@ -267,9 +216,6 @@ class KqlTest extends TestCase
 		$this->assertSame($expected, $result);
 	}
 
-	/**
-	 * @covers ::select
-	 */
 	public function testSelectWithString(): void
 	{
 		$result = Kql::run([
