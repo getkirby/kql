@@ -34,6 +34,8 @@
 		"getkirby/cms": "^6.0",
 		"getkirby/composer-installer": "^1.2.1"
 	},
+	"minimum-stability": "beta",
+	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"Kirby\\": [
@@ -65,9 +67,10 @@
 			"@analyze",
 			"@test"
 		],
-		"fix": "cpx getkirby/php-cs:^0.2 fix",
+		"fix": [
+			"cpx getkirby/php-cs:^0.2 fix",
+			"composer normalize"
+		],
 		"test": "phpunit --stderr --coverage-html=tests/coverage"
-	},
-	"minimum-stability": "beta",
-	"prefer-stable": true
+	}
 }
