@@ -88,6 +88,8 @@ Given a POST request to: `/api/query`
 
 ## Installation
 
+KQL 4 requires Kirby 6. For Kirby 3, 4 and 5, please use [KQL 3](https://github.com/getkirby/kql/releases/tag/3.0.0).
+
 ### Manual
 
 [Download](https://github.com/getkirby/kql/releases) and copy this repository to `/site/plugins/kql` of your Kirby installation.
