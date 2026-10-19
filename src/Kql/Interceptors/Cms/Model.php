@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 use Kirby\Kql\Interceptor;
 
-class Model extends Interceptor
+abstract class Model extends Interceptor
 {
 	public const CLASS_ALIAS = 'model';
 

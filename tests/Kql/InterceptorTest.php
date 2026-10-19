@@ -11,6 +11,7 @@ use Kirby\Blueprint\UserBlueprint;
 use Kirby\Cms\App;
 use Kirby\Cms\File;
 use Kirby\Cms\FileVersion;
+use Kirby\Cms\Language;
 use Kirby\Cms\Page;
 use Kirby\Cms\Role;
 use Kirby\Cms\Site;
@@ -278,6 +279,27 @@ class InterceptorTest extends TestCase
 	{
 		$result = Interceptor::replace($object());
 		$this->assertInstanceOf($interceptor, $result);
+	}
+
+	public function testReplaceLanguage(): void
+	{
+		// abstract interceptors (here for `Kirby\Cms\Model`)
+		// must not be used as fallback for child classes
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('Access to the class "Kirby\Cms\Language" is not supported');
+		Interceptor::replace(new Language(['code' => 'en']));
+	}
+
+	public function testReplaceLanguageAllowedOptions(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['classes' => ['allowed' => ['Kirby\Cms\Language']]]
+			]
+		]);
+
+		$language = new Language(['code' => 'en']);
+		$this->assertSame($language, Interceptor::replace($language));
 	}
 
 	public function testReplaceNonObject(): void
