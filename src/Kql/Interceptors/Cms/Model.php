@@ -80,6 +80,16 @@ abstract class Model extends Interceptor
 		];
 	}
 
+	protected function allowedMethodsForParents()
+	{
+		return [
+			'parent',
+			'parentId',
+			'parentModel',
+			'site',
+		];
+	}
+
 	protected function allowedMethodsForSiblings()
 	{
 		return [
@@ -94,16 +104,6 @@ abstract class Model extends Interceptor
 			'isFirst',
 			'isLast',
 			'isNth'
-		];
-	}
-
-	protected function allowedMethodsForParents()
-	{
-		return [
-			'parent',
-			'parentId',
-			'parentModel',
-			'site',
 		];
 	}
 

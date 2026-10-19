@@ -2,6 +2,8 @@
 
 namespace Kirby\Kql;
 
+use Kirby\Cms\App;
+
 error_reporting(E_ALL);
 
 define('KIRBY_HELPER_DUMP', false);
@@ -14,4 +16,4 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../index.php';
 
 // don't register any error handlers in tests
-\Kirby\Cms\App::$enableWhoops = false;
+App::$enableWhoops = false;

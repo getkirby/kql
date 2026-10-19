@@ -5,7 +5,7 @@ namespace Kirby\Kql;
 use Kirby\Exception\PermissionException;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(\Kirby\Kql\Query::class)]
+#[CoversClass(Query::class)]
 class QueryTest extends TestCase
 {
 	public function testIntercept(): void

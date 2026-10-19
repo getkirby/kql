@@ -163,8 +163,13 @@ jobs:
       - name: Setup PHP environment
         uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2
         with:
+          php-version: "8.4"
           coverage: none
-          tools: php-cs-fixer:3.8.0
+
+      - name: Install cpx
+        run: |
+          composer global require cpx/cpx
+          composer global config bin-dir --absolute --quiet >> "$GITHUB_PATH"
 
       - name: Cache analysis data
         id: finishPrepare
@@ -179,7 +184,7 @@ jobs:
           PHP_CS_FIXER_IGNORE_ENV: 1
         # Use the --dry-run flag in push builds to get a failed CI status
         run: >
-          php-cs-fixer fix --diff
+          cpx getkirby/php-cs:^0.2 fix --diff
           ${{ github.event_name != 'pull_request' && '--dry-run' || '' }}
 
       - name: Create code suggestions from the coding style changes (on PR only)

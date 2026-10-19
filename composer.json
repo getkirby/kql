@@ -65,7 +65,7 @@
 			"@analyze",
 			"@test"
 		],
-		"fix": "php-cs-fixer fix",
+		"fix": "cpx getkirby/php-cs:^0.2 fix",
 		"test": "phpunit --stderr --coverage-html=tests/coverage"
 	},
 	"minimum-stability": "beta",

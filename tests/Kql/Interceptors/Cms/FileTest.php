@@ -13,6 +13,14 @@ class FileTest extends TestCase
 {
 	public const TMP = __DIR__ . '/tmp';
 
+	protected function file(): File
+	{
+		return new File(new FileObject([
+			'filename' => 'image.png',
+			'parent'   => new Page(['slug' => 'test'])
+		]));
+	}
+
 	public function setUp(): void
 	{
 		parent::setUp();
@@ -32,14 +40,6 @@ class FileTest extends TestCase
 	public function tearDown(): void
 	{
 		Dir::remove(static::TMP);
-	}
-
-	protected function file(): File
-	{
-		return new File(new FileObject([
-			'filename' => 'image.png',
-			'parent'   => new Page(['slug' => 'test'])
-		]));
 	}
 
 	public function testDimensions(): void

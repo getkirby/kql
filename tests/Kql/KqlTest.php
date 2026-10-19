@@ -7,7 +7,7 @@ use Kirby\Cms\Page;
 use Kirby\Exception\PermissionException;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(\Kirby\Kql\Kql::class)]
+#[CoversClass(Kql::class)]
 class KqlTest extends TestCase
 {
 	public function testFetch(): void
@@ -93,18 +93,18 @@ class KqlTest extends TestCase
 		$this->assertSame(['title' => $expected], $result);
 	}
 
-	public function testRunInvalidQuery(): void
-	{
-		$this->expectException(Exception::class);
-		$this->expectExceptionMessage('The query must be a string');
-		Kql::run(['query' => false]);
-	}
-
 	public function testRunForbiddenMethod(): void
 	{
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
 		Kql::run('site.children.first.delete');
+	}
+
+	public function testRunInvalidQuery(): void
+	{
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('The query must be a string');
+		Kql::run(['query' => false]);
 	}
 
 	public function testSelect(): void
@@ -116,17 +116,6 @@ class KqlTest extends TestCase
 		// help
 		$result = Kql::select('foo', '?');
 		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
-	}
-
-	public function testSelectWithAlias(): void
-	{
-		$result = Kql::run([
-			'select' => [
-				'myTitle' => 'site.title'
-			]
-		]);
-
-		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
 	public function testSelectFromArray(): void
@@ -171,6 +160,17 @@ class KqlTest extends TestCase
 		]);
 
 		$this->assertSame('/about', $result['test']['url']);
+	}
+
+	public function testSelectWithAlias(): void
+	{
+		$result = Kql::run([
+			'select' => [
+				'myTitle' => 'site.title'
+			]
+		]);
+
+		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
 	public function testSelectWithBoolean(): void

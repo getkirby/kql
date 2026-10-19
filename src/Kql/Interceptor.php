@@ -17,7 +17,6 @@ use Throwable;
  * intercept method calls that are not allowed
  * on the related core class
  *
- * @package   Kirby KQL
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
  * @copyright Bastian Allgeier
@@ -83,56 +82,12 @@ abstract class Interceptor
 
 	/**
 	 * Throws exception for accessing a restricted method
-	 * @throws \Kirby\Exception\PermissionException
+	 * @throws PermissionException
 	 */
 	protected function forbiddenMethod(string $method)
 	{
 		$name = get_class($this->object) . '::' . $method . '()';
 		throw new PermissionException('The method "' . $name . '" is not allowed in the API context');
-	}
-
-	/**
-	 * Checks if method is allowed to call
-	 */
-	public function isAllowedMethod($method)
-	{
-		$kirby = App::instance();
-		$name  = strtolower(get_class($this->object) . '::' . $method);
-
-		// get list of blocked methods from config
-		$blocked = $kirby->option('kql.methods.blocked', []);
-		$blocked = array_map('strtolower', $blocked);
-
-		// check in the block list from the config
-		if (in_array($name, $blocked) === true) {
-			return false;
-		}
-
-		// check in class allow list
-		if (in_array($method, $this->allowedMethods()) === true) {
-			return true;
-		}
-
-		// get list of explicitly allowed methods from config
-		$allowed = $kirby->option('kql.methods.allowed', []);
-		$allowed = array_map('strtolower', $allowed);
-
-		// check in the allow list from the config
-		if (in_array($name, $allowed) === true) {
-			return true;
-		}
-
-		// support for model methods with docblock comment
-		if ($this->isAllowedCallable($method) === true) {
-			return true;
-		}
-
-		// support for custom methods with docblock comment
-		if ($this->isAllowedCustomMethod($method) === true) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -183,6 +138,50 @@ abstract class Interceptor
 	}
 
 	/**
+	 * Checks if method is allowed to call
+	 */
+	public function isAllowedMethod($method)
+	{
+		$kirby = App::instance();
+		$name  = strtolower(get_class($this->object) . '::' . $method);
+
+		// get list of blocked methods from config
+		$blocked = $kirby->option('kql.methods.blocked', []);
+		$blocked = array_map('strtolower', $blocked);
+
+		// check in the block list from the config
+		if (in_array($name, $blocked) === true) {
+			return false;
+		}
+
+		// check in class allow list
+		if (in_array($method, $this->allowedMethods()) === true) {
+			return true;
+		}
+
+		// get list of explicitly allowed methods from config
+		$allowed = $kirby->option('kql.methods.allowed', []);
+		$allowed = array_map('strtolower', $allowed);
+
+		// check in the allow list from the config
+		if (in_array($name, $allowed) === true) {
+			return true;
+		}
+
+		// support for model methods with docblock comment
+		if ($this->isAllowedCallable($method) === true) {
+			return true;
+		}
+
+		// support for custom methods with docblock comment
+		if ($this->isAllowedCustomMethod($method) === true) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Checks if the class exists and can be used as
 	 * interceptor. Abstract interceptors only serve as
 	 * base classes and are never used directly.
@@ -219,8 +218,8 @@ abstract class Interceptor
 	/**
 	 * Tries to replace a Kirby core object with the
 	 * corresponding interceptor.
-	 * @throws \Kirby\Exception\InvalidArgumentException for non-objects
-	 * @throws \Kirby\Exception\PermissionException when accessing blocked class
+	 * @throws InvalidArgumentException for non-objects
+	 * @throws PermissionException when accessing blocked class
 	 */
 	public static function replace($object)
 	{
@@ -229,7 +228,7 @@ abstract class Interceptor
 		}
 
 		$kirby = App::instance();
-		$class = get_class($object);
+		$class = $object::class;
 		$name  = strtolower($class);
 
 		// 1. Is $object class explicitly blocked?

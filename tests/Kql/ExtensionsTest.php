@@ -14,14 +14,6 @@ class ExtensionsTest extends TestCase
 {
 	public const TMP = __DIR__ . '/tmp';
 
-	public function tearDown(): void
-	{
-		if (is_dir(static::TMP) === true) {
-			App::instance()->session()->destroy();
-			Dir::remove(static::TMP);
-		}
-	}
-
 	protected function api(array $query, array $options = [])
 	{
 		$app = $this->app->clone([
@@ -36,6 +28,14 @@ class ExtensionsTest extends TestCase
 		]);
 
 		return $app->api()->call('query', 'POST');
+	}
+
+	public function tearDown(): void
+	{
+		if (is_dir(static::TMP) === true) {
+			App::instance()->session()->destroy();
+			Dir::remove(static::TMP);
+		}
 	}
 
 	public function testApiRoute(): void

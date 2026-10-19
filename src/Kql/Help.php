@@ -10,7 +10,6 @@ use ReflectionMethod;
  * Providing help information about
  * queried objects, methods, arrays...
  *
- * @package   Kirby KQL
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
  * @copyright Bastian Allgeier
@@ -57,7 +56,7 @@ class Help
 	public static function forMethod(object $object, string $method): array
 	{
 		$reflection = new ReflectionMethod($object, $method);
-		$returns    = $reflection->getReturnType() ? (string)$reflection->getReturnType(): null;
+		$returns    = $reflection->getReturnType() ? (string)$reflection->getReturnType() : null;
 		$params     = [];
 
 		foreach ($reflection->getParameters() as $param) {

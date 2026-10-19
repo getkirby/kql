@@ -10,8 +10,6 @@ use ReflectionMethod;
 
 class Field extends Interceptor
 {
-	public const CLASS_ALIAS = 'field';
-
 	/**
 	 * Core field methods that must not be
 	 * called in the API context
@@ -19,6 +17,7 @@ class Field extends Interceptor
 	public const BLOCKED_FIELD_METHODS = [
 		'toenum'
 	];
+	public const CLASS_ALIAS = 'field';
 
 	protected static array|null $fieldMethods = null;
 
