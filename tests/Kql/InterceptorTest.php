@@ -43,6 +43,10 @@ class UserExtended extends User
 {
 }
 
+abstract class TestAbstractInterceptor extends Interceptor
+{
+}
+
 class TestInterceptor extends Interceptor
 {
 	public const CLASS_ALIAS = 'test';
@@ -279,6 +283,31 @@ class InterceptorTest extends TestCase
 	{
 		$result = Interceptor::replace($object());
 		$this->assertInstanceOf($interceptor, $result);
+	}
+
+	public function testReplaceInterceptorOptions(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['STDclass' => TestInterceptor::class]]
+			]
+		]);
+
+		$object = new stdClass();
+		$this->assertInstanceOf(TestInterceptor::class, Interceptor::replace($object));
+	}
+
+	public function testReplaceInterceptorOptionsWithAbstractInterceptor(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['stdClass' => TestAbstractInterceptor::class]]
+			]
+		]);
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
+		Interceptor::replace(new stdClass());
 	}
 
 	public function testReplaceLanguage(): void
