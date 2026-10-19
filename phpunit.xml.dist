@@ -13,11 +13,8 @@
 	<source>
 		<include>
 			<directory>./src</directory>
+			<file>./extensions/helpers.php</file>
 		</include>
-
-		<exclude>
-			<directory suffix=".php">./src/Kql/Interceptors</directory>
-		</exclude>
 	</source>
 
 	<testsuites>
