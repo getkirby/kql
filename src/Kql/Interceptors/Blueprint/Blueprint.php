@@ -1,6 +1,6 @@
 <?php
 
-namespace Kirby\Kql\Interceptors\Cms;
+namespace Kirby\Kql\Interceptors\Blueprint;
 
 use Kirby\Kql\Interceptor;
 
@@ -13,7 +13,6 @@ class Blueprint extends Interceptor
 		'fields',
 		'isDefault',
 		'name',
-		'sections',
 		'options',
 		'tabs',
 		'title',
@@ -28,8 +27,6 @@ class Blueprint extends Interceptor
 			'isDefault',
 			'name',
 			'options',
-			'section',
-			'sections',
 			'tab',
 			'tabs',
 			'title',
@@ -41,22 +38,23 @@ class Blueprint extends Interceptor
 		return $this->object->fields();
 	}
 
-	public function sections(): array
+	public function tab(string|null $name = null): array|null
 	{
-		return array_keys($this->object->sections());
-	}
+		$tab = $this->object->tab($name);
 
-	public function tab(string $name): ?array
-	{
-		if ($tab = $this->object->tab($name)) {
-			foreach ($tab['columns'] as $columnIndex => $column) {
-				$tab['columns'][$columnIndex]['sections'] = array_keys($column['sections']);
-			}
-
-			return $tab;
+		if ($tab === null) {
+			return null;
 		}
 
-		return null;
+		$props = $tab->toViewProps();
+
+		// only list the field names for each column,
+		// the full field definitions are available via `fields`
+		foreach ($props['columns'] as $columnIndex => $column) {
+			$props['columns'][$columnIndex]['fields'] = array_keys($column['fields'] ?? []);
+		}
+
+		return $props;
 	}
 
 	public function tabs(): array
@@ -64,7 +62,7 @@ class Blueprint extends Interceptor
 		$tabs = [];
 
 		foreach ($this->object->tabs() as $tab) {
-			$tabs[$tab['name']] = $this->tab($tab['name']);
+			$tabs[$tab->name()] = $this->tab($tab->name());
 		}
 
 		return $tabs;
