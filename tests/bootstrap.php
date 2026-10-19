@@ -12,3 +12,6 @@ ini_set('display_startup_errors', 'on');
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../index.php';
+
+// don't register any error handlers in tests
+\Kirby\Cms\App::$enableWhoops = false;

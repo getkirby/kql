@@ -2,15 +2,15 @@
 
 <phpunit
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.4/phpunit.xsd"
 
 	bootstrap="tests/bootstrap.php"
+	cacheDirectory=".phpunit.cache"
 	colors="true"
-	forceCoversAnnotation="true"
-	verbose="true"
+	requireCoverageMetadata="true"
 	stderr="true"
 >
-	<coverage>
+	<source>
 		<include>
 			<directory>./src</directory>
 		</include>
@@ -18,7 +18,7 @@
 		<exclude>
 			<directory suffix=".php">./src/Kql/Interceptors</directory>
 		</exclude>
-	</coverage>
+	</source>
 
 	<testsuites>
 		<testsuite name="Tests">
@@ -28,5 +28,5 @@
 
 	<php>
 		<ini name="memory_limit" value="2048M" />
-    </php>
+	</php>
 </phpunit>
