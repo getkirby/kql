@@ -10,7 +10,6 @@ use Kirby\Toolkit\Str;
 /**
  * ...
  *
- * @package   Kirby KQL
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
  * @copyright Bastian Allgeier
@@ -72,7 +71,7 @@ class Kql
 				return $object->toArray();
 			}
 
-			throw new Exception('The object "' . get_class($object) . '" cannot be rendered. Try querying one of its methods instead.');
+			throw new Exception('The object "' . $object::class . '" cannot be rendered. Try querying one of its methods instead.');
 		}
 
 		return $value;

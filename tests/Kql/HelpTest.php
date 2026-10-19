@@ -5,7 +5,7 @@ namespace Kirby\Kql;
 use Kirby\Cms\Page;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(\Kirby\Kql\Help::class)]
+#[CoversClass(Help::class)]
 class HelpTest extends TestCase
 {
 	public function testFor(): void
