@@ -17,4 +17,16 @@ class StructureObject extends Model
 			]
 		);
 	}
+
+	/**
+	 * Renders the item flat, like its structure does,
+	 * but without the names the block list removes
+	 */
+	public function toArray(): array|null
+	{
+		return [
+			...$this->isAllowedMethod('content') ? $this->object->content()->toArray() : [],
+			...$this->isAllowedMethod('id') ? ['id' => $this->object->id()] : []
+		];
+	}
 }
