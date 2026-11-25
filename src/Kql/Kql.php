@@ -60,6 +60,12 @@ class Kql
 
 	public static function render($value)
 	{
+		// arrays can hold objects, e.g. from `pluck()`, which
+		// must not reach the response without their interceptor
+		if (is_array($value) === true) {
+			return array_map(static::render(...), $value);
+		}
+
 		if (is_object($value) === true) {
 			// replace actual object with intercepting proxy class
 			$object = Interceptor::replace($value);
@@ -153,7 +159,7 @@ class Kql
 				$selection = true;
 			}
 
-			$result[$key] = $array[$key] ?? null;
+			$result[$key] = static::render($array[$key] ?? null);
 		}
 
 		return $result;

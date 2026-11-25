@@ -6,6 +6,7 @@ use Exception;
 use Kirby\Cms\Page;
 use Kirby\Exception\PermissionException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use stdClass;
 
 #[CoversClass(\Kirby\Kql\Kql::class)]
 class KqlTest extends TestCase
@@ -57,6 +58,27 @@ class KqlTest extends TestCase
 		$object = new Page(['slug' => 'test']);
 		$result = Kql::render($object);
 		$this->assertIsArray($result);
+	}
+
+	public function testRenderArray(): void
+	{
+		$result = Kql::render([
+			'page'  => new Page(['slug' => 'test']),
+			'pages' => [new Page(['slug' => 'nested'])],
+			'title' => 'Test'
+		]);
+
+		$this->assertSame('test', $result['page']['id']);
+		$this->assertSame('nested', $result['pages'][0]['id']);
+		$this->assertSame('Test', $result['title']);
+	}
+
+	public function testRenderArrayWithUnsupportedObject(): void
+	{
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
+
+		Kql::render(['object' => new stdClass()]);
 	}
 
 	public function testRenderOriginalObject(): void
@@ -117,6 +139,12 @@ class KqlTest extends TestCase
 		$this->assertSame('page://abc', Kql::run('page.uuid', $page));
 	}
 
+	public function testRunArrayOfFields(): void
+	{
+		$result = Kql::run('site.children.pluck("title")');
+		$this->assertSame(['projects', 'about', 'contact'], $result);
+	}
+
 	public function testRunInvalidQuery(): void
 	{
 		$this->expectException(Exception::class);
@@ -165,6 +193,9 @@ class KqlTest extends TestCase
 
 		$result = Kql::select($data, ['title']);
 		$this->assertSame(['title' => 'Test Site'], $result);
+
+		$result = Kql::select(['page' => new Page(['slug' => 'test'])], ['page']);
+		$this->assertSame('test', $result['page']['id']);
 	}
 
 	public function testSelectFromCollection(): void
