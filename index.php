@@ -12,5 +12,5 @@ require_once __DIR__ . '/extensions/aliases.php';
 require_once __DIR__ . '/extensions/helpers.php';
 
 App::plugin('getkirby/kql', [
-	'api' => require_once 'extensions/api.php'
+	'api' => require __DIR__ . '/extensions/api.php'
 ]);
