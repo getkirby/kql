@@ -82,6 +82,14 @@ abstract class Interceptor
 	}
 
 	/**
+	 * Returns the class names, nearest first
+	 */
+	protected static function classNames(object $object): array
+	{
+		return [$object::class, ...array_values(class_parents($object))];
+	}
+
+	/**
 	 * Throws exception for accessing a restricted method
 	 * @throws \Kirby\Exception\PermissionException
 	 */
@@ -96,15 +104,8 @@ abstract class Interceptor
 	 */
 	public function isAllowedMethod($method)
 	{
-		$kirby = App::instance();
-		$name  = strtolower(get_class($this->object) . '::' . $method);
-
-		// get list of blocked methods from config
-		$blocked = $kirby->option('kql.methods.blocked', []);
-		$blocked = array_map('strtolower', $blocked);
-
 		// check in the block list from the config
-		if (in_array($name, $blocked) === true) {
+		if ($this->isBlockedMethod($method) === true) {
 			return false;
 		}
 
@@ -113,12 +114,8 @@ abstract class Interceptor
 			return true;
 		}
 
-		// get list of explicitly allowed methods from config
-		$allowed = $kirby->option('kql.methods.allowed', []);
-		$allowed = array_map('strtolower', $allowed);
-
 		// check in the allow list from the config
-		if (in_array($name, $allowed) === true) {
+		if (static::isListed($this->methodNames($method), 'kql.methods.allowed') === true) {
 			return true;
 		}
 
@@ -182,6 +179,11 @@ abstract class Interceptor
 		return false;
 	}
 
+	protected function isBlockedMethod(string $method): bool
+	{
+		return static::isListed($this->methodNames($method), 'kql.methods.blocked');
+	}
+
 	protected static function isInterceptor(string $class): bool
 	{
 		if (is_subclass_of($class, self::class) === false) {
@@ -189,6 +191,14 @@ abstract class Interceptor
 		}
 
 		return (new ReflectionClass($class))->isAbstract() === false;
+	}
+
+	protected static function isListed(array $names, string $option): bool
+	{
+		$list  = array_map('strtolower', App::instance()->option($option, []));
+		$names = array_map('strtolower', $names);
+
+		return array_intersect($names, $list) !== [];
 	}
 
 	/**
@@ -211,6 +221,14 @@ abstract class Interceptor
 		return null;
 	}
 
+	protected function methodNames(string $method): array
+	{
+		return array_map(
+			fn (string $class) => $class . '::' . $method,
+			static::classNames($this->object)
+		);
+	}
+
 	/**
 	 * Tries to replace a Kirby core object with the
 	 * corresponding interceptor.
@@ -223,17 +241,12 @@ abstract class Interceptor
 			throw new InvalidArgumentException('Unsupported value: ' . gettype($object));
 		}
 
-		$kirby = App::instance();
-		$class = get_class($object);
-		$name  = strtolower($class);
+		$class   = $object::class;
+		$classes = static::classNames($object);
 
 		// 1. Is $object class explicitly blocked?
-		// get list of blocked classes from config
-		$blocked = $kirby->option('kql.classes.blocked', []);
-		$blocked = array_map('strtolower', $blocked);
-
 		// check in the block list from the config
-		if (in_array($name, $blocked) === true) {
+		if (static::isListed($classes, 'kql.classes.blocked') === true) {
 			throw new PermissionException('Access to the class "' . $class . '" is blocked');
 		}
 
@@ -244,38 +257,30 @@ abstract class Interceptor
 		}
 
 		// 3. Does an interceptor class for $object exist?
-		// check for an interceptor class
-		$interceptors = $kirby->option('kql.interceptors', []);
+		// the nearest class wins, and for each class an interceptor
+		// from the config wins over the built-in one
+		$interceptors = App::instance()->option('kql.interceptors', []);
 		$interceptors = array_change_key_case($interceptors, CASE_LOWER);
-		// load an interceptor from config if it exists and otherwise fall back to a built-in interceptor
-		$interceptor = $interceptors[$name] ?? static::class($class);
 
-		// check for a valid interceptor class
-		if ($class !== $interceptor && static::isInterceptor($interceptor) === true) {
-			return new $interceptor($object);
-		}
+		foreach ($classes as $className) {
+			$interceptorClasses = [
+				$interceptors[strtolower($className)] ?? null,
+				static::class($className)
+			];
 
-		// 4. Also check for parent classes of $object
-		// go through parents of the current object to use their interceptors as fallback
-		foreach (class_parents($object) as $parent) {
-			$interceptor = static::class($parent);
-
-			if (static::isInterceptor($interceptor) === true) {
-				return new $interceptor($object);
+			foreach ($interceptorClasses as $interceptor) {
+				if ($interceptor !== null && static::isInterceptor($interceptor) === true) {
+					return new $interceptor($object);
+				}
 			}
 		}
 
-		// 5. $object has no interceptor but is explicitly allowed?
-		// check for a class in the allow list
-		$allowed = $kirby->option('kql.classes.allowed', []);
-		$allowed = array_map('strtolower', $allowed);
-
-		// return the plain object if it is allowed
-		if (in_array($name, $allowed) === true) {
+		// 4. $object has no interceptor but is explicitly allowed?
+		if (static::isListed($classes, 'kql.classes.allowed') === true) {
 			return $object;
 		}
 
-		// 6. None of the above? Block class.
+		// 5. None of the above? Block class.
 		throw new PermissionException('Access to the class "' . $class . '" is not supported');
 	}
 
