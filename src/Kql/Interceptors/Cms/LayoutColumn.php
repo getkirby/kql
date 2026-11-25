@@ -2,6 +2,8 @@
 
 namespace Kirby\Kql\Interceptors\Cms;
 
+use Kirby\Kql\Interceptor;
+
 class LayoutColumn extends Model
 {
 	public const CLASS_ALIAS = 'layoutColumn';
@@ -12,6 +14,14 @@ class LayoutColumn extends Model
 		'isEmpty',
 		'width',
 	];
+
+	/**
+	 * A column has no content to fall back to
+	 */
+	public function __call($method, array $args = [])
+	{
+		return Interceptor::__call($method, $args);
+	}
 
 	public function allowedMethods(): array
 	{
