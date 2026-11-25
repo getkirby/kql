@@ -20,9 +20,12 @@ use Kirby\Content\Content;
 use Kirby\Content\Field;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
+use NewsPage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
+
+require_once __DIR__ . '/fixtures/models.php';
 
 class AppExtended extends App
 {
@@ -239,6 +242,10 @@ class InterceptorTest extends TestCase
 			],
 			[
 				fn () => new PageExtended(['slug' => 'test']),
+				'Kirby\Kql\Interceptors\Cms\Page'
+			],
+			[
+				fn () => new NewsPage(['slug' => 'test']),
 				'Kirby\Kql\Interceptors\Cms\Page'
 			],
 			[

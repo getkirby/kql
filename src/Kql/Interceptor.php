@@ -188,7 +188,7 @@ abstract class Interceptor
 	 */
 	protected static function isInterceptor(string $class): bool
 	{
-		if (class_exists($class) === false) {
+		if (is_subclass_of($class, self::class) === false) {
 			return false;
 		}
 
