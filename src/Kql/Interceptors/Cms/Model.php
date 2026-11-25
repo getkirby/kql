@@ -108,8 +108,8 @@ class Model extends Interceptor
 		];
 	}
 
-	protected function uuid(): string
+	protected function uuid(): string|null
 	{
-		return $this->object->uuid()->toString();
+		return $this->object->uuid()?->toString();
 	}
 }
