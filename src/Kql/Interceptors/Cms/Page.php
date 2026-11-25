@@ -56,12 +56,12 @@ class Page extends Model
 		);
 	}
 
-	public function intendedTemplate(): string
+	protected function intendedTemplate(): string
 	{
 		return $this->object->intendedTemplate()->name();
 	}
 
-	public function template(): string
+	protected function template(): string
 	{
 		return $this->object->template()->name();
 	}

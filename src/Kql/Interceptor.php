@@ -40,7 +40,7 @@ abstract class Interceptor
 	public function __call(string $method, array $args = [])
 	{
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		$this->forbiddenMethod($method);
@@ -69,6 +69,19 @@ abstract class Interceptor
 	public function allowedMethods(): array
 	{
 		return [];
+	}
+
+	/**
+	 * Keep the methods it calls on the interceptor protected,
+	 * so that a query reaches them only through `__call()`
+	 */
+	protected function callMethod(string $method, array $args): mixed
+	{
+		if ($this->isInterceptorMethod($method) === true) {
+			return $this->$method(...$args);
+		}
+
+		return $this->object->$method(...$args);
 	}
 
 	/**
@@ -191,6 +204,21 @@ abstract class Interceptor
 		}
 
 		return (new ReflectionClass($class))->isAbstract() === false;
+	}
+
+	protected function isInterceptorMethod(string $method): bool
+	{
+		if (method_exists($this, $method) === false) {
+			return false;
+		}
+
+		$reflection = new ReflectionMethod($this, $method);
+
+		// private methods of child interceptors are out
+		// of reach from here and would recurse into `__call()`
+		return
+			$reflection->isPrivate() === false &&
+			$reflection->getDeclaringClass()->getName() !== self::class;
 	}
 
 	protected static function isListed(array $names, string $option): bool

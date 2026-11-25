@@ -59,12 +59,12 @@ class File extends Model
 		);
 	}
 
-	public function dimensions(): array
+	protected function dimensions(): array
 	{
 		return $this->object->dimensions()->toArray();
 	}
 
-	public function exif(): array
+	protected function exif(): array
 	{
 		return $this->object->exif()->toArray();
 	}

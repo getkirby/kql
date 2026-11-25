@@ -93,6 +93,30 @@ class KqlTest extends TestCase
 		$this->assertSame(['title' => $expected], $result);
 	}
 
+	public function testRunInterceptorMethodWithBlockedConfig(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['blocked' => ['Kirby\Cms\Page::template']]]
+			]
+		]);
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Cms\Page::template()" is not allowed in the API context');
+
+		Kql::run('site.children.first.template');
+	}
+
+	public function testRunUuid(): void
+	{
+		$this->app->clone([
+			'options' => ['cache' => ['uuid' => false]]
+		]);
+
+		$page = new Page(['slug' => 'test', 'content' => ['uuid' => 'abc']]);
+		$this->assertSame('page://abc', Kql::run('page.uuid', $page));
+	}
+
 	public function testRunInvalidQuery(): void
 	{
 		$this->expectException(Exception::class);

@@ -58,10 +58,23 @@ class TestInterceptor extends Interceptor
 	}
 }
 
-
 abstract class TestAbstractInterceptor extends Interceptor
 {
 }
+
+class TestInterceptorWithMethods extends TestInterceptor
+{
+	protected function more(): string
+	{
+		return 'interceptor';
+	}
+
+	private function foo(): string
+	{
+		return 'private';
+	}
+}
+
 
 #[CoversClass(\Kirby\Kql\Interceptor::class)]
 class InterceptorTest extends TestCase
@@ -75,6 +88,22 @@ class InterceptorTest extends TestCase
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('The method "Kirby\Kql\TestObject::foo()" is not allowed in the API context');
 		$interceptor->foo('test');
+	}
+
+	public function testCallInterceptorMethod(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['allowed' => ['Kirby\Kql\TestObject::foo']]]
+			]
+		]);
+
+		$interceptor = new TestInterceptorWithMethods(new TestObject());
+
+		// protected interceptor methods replace the object's,
+		// private ones stay out of reach
+		$this->assertSame('interceptor', $interceptor->more());
+		$this->assertSame(['hello'], $interceptor->foo());
 	}
 
 	public function testDebugInfo(): void

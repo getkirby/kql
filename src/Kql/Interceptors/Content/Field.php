@@ -17,7 +17,7 @@ class Field extends Interceptor
 		}
 
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		// field methods
