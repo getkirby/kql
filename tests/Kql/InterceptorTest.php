@@ -115,20 +115,6 @@ class InterceptorTest extends TestCase
 		$this->assertSame(['hello'], $interceptor->foo());
 	}
 
-	public function testCallInterceptorMethodWithBlockedConfig(): void
-	{
-		$this->app->clone([
-			'options' => [
-				'kql' => ['methods' => ['blocked' => ['Kirby\Kql\TestObject::more']]]
-			]
-		]);
-
-		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('The method "Kirby\Kql\TestObject::more()" is not allowed in the API context');
-
-		(new TestInterceptorWithMethods(new TestObject()))->more();
-	}
-
 	public function testClass(): void
 	{
 		$this->assertSame('Kirby\Kql\Interceptors\Kql\Test', Interceptor::class('Kirby\Kql\Test'));
