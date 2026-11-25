@@ -66,16 +66,12 @@ abstract class Model extends Interceptor
 			'apiUrl',
 			'blueprint',
 			'content',
-			'dragText',
 			'exists',
 			'id',
 			'mediaUrl',
 			'modified',
 			'permissions',
 			'panel',
-			'permalink',
-			'previewUrl',
-			'url',
 			'uuid',
 			'version'
 		];
@@ -86,7 +82,6 @@ abstract class Model extends Interceptor
 		return [
 			'parent',
 			'parentId',
-			'parentModel',
 			'site',
 		];
 	}
