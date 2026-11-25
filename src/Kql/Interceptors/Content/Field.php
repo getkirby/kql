@@ -3,6 +3,7 @@
 namespace Kirby\Kql\Interceptors\Content;
 
 use Kirby\Cms\HasMethods;
+use Kirby\Content\Field as FieldObject;
 use Kirby\Content\FieldMethods;
 use Kirby\Kql\Interceptor;
 use ReflectionClass;
@@ -19,10 +20,17 @@ class Field extends Interceptor
 	];
 	public const CLASS_ALIAS = 'field';
 
+	protected static array|null $fieldMethodAliases = null;
 	protected static array|null $fieldMethods = null;
 
 	public function __call($method, array $args = [])
 	{
+		// the block list from the config also covers
+		// core field methods and custom field methods
+		if ($this->isBlockedMethod($method) === true) {
+			$this->forbiddenMethod($method);
+		}
+
 		if ($this->isAllowedMethod($method) === true) {
 			return $this->object->$method(...$args);
 		}
@@ -53,6 +61,32 @@ class Field extends Interceptor
 			'or',
 			'value'
 		];
+	}
+
+	/**
+	 * Returns the lowercase names of the core field method
+	 * aliases, which Kirby marks with `@see self::method()`,
+	 * mapped to the method they call
+	 * @internal
+	 */
+	public static function fieldMethodAliases(): array
+	{
+		if (static::$fieldMethodAliases !== null) {
+			return static::$fieldMethodAliases;
+		}
+
+		$aliases = [];
+
+		foreach ((new ReflectionClass(FieldObject::class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			if (
+				str_starts_with($method->getName(), '__') === false &&
+				preg_match('/@see self::(\w+)\(\)/', $method->getDocComment() ?: '', $matches) === 1
+			) {
+				$aliases[strtolower($method->getName())] = strtolower($matches[1]);
+			}
+		}
+
+		return static::$fieldMethodAliases = $aliases;
 	}
 
 	/**
@@ -90,6 +124,20 @@ class Field extends Interceptor
 		}
 
 		return static::$fieldMethods = $methods;
+	}
+
+	/**
+	 * Blocking a core field method also blocks its aliases
+	 */
+	protected function isBlockedMethod(string $method): bool
+	{
+		$aliasedMethod = static::fieldMethodAliases()[strtolower($method)] ?? null;
+
+		if ($aliasedMethod !== null && parent::isBlockedMethod($aliasedMethod) === true) {
+			return true;
+		}
+
+		return parent::isBlockedMethod($method);
 	}
 
 	public function toResponse()

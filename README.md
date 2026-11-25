@@ -876,7 +876,7 @@ return [
 ];
 ```
 
-The entry also covers subclasses, so `Kirby\Cms\Page::url` is blocked for your page models as well.
+The entry also covers subclasses, so `Kirby\Cms\Page::url` is blocked for your page models as well. Core and custom field methods can be blocked the same way, e.g. with `Kirby\Content\Field::toPages`. Blocking a core field method also blocks its aliases, such as `kt` for `kirbytext`.
 
 ### Blocking Classes
 
