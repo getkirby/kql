@@ -941,14 +941,22 @@ class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 {
   ...
 
-  public function isReady()
+  public function allowedMethods(): array
+  {
+    return [
+      'isInstallable',
+      'isReady',
+    ];
+  }
+
+  protected function isReady()
   {
     return 'yes it is!';
   }
 }
 ```
 
-This custom method can now be used with `kirby.system.isReady` in KQL and will return `yes it is!`
+This custom method can now be used with `kirby.system.isReady` in KQL and will return `yes it is!`. Keep such methods protected and list them in `allowedMethods()`, so `Kirby\Cms\System::isReady` in `kql.methods.blocked` can still block it.
 
 ### Unintercepted Classes
 
@@ -966,7 +974,7 @@ return [
 ];
 ```
 
-This will introduce full access to all public class methods, for the class and its subclasses. This can be very risky though and you should avoid this if possible.
+This will introduce full access to all public class methods, for the class and its subclasses, unless an interceptor applies. This can be very risky though and you should avoid this if possible.
 
 ### No Mutations
 
