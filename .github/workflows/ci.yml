@@ -184,7 +184,7 @@ jobs:
           PHP_CS_FIXER_IGNORE_ENV: 1
         # Use the --dry-run flag in push builds to get a failed CI status
         run: >
-          cpx getkirby/php-cs:^0.2 fix --diff
+          cpx getkirby/php-cs:0.3.0 fix --diff
           ${{ github.event_name != 'pull_request' && '--dry-run' || '' }}
 
       - name: Create code suggestions from the coding style changes (on PR only)
