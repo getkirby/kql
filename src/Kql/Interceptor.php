@@ -7,6 +7,7 @@ use Kirby\Cms\App;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
 use Kirby\Toolkit\Str;
+use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
@@ -181,6 +182,15 @@ abstract class Interceptor
 		return false;
 	}
 
+	protected static function isInterceptor(string $class): bool
+	{
+		if (is_subclass_of($class, self::class) === false) {
+			return false;
+		}
+
+		return (new ReflectionClass($class))->isAbstract() === false;
+	}
+
 	/**
 	 * Returns a registered method by name, either from
 	 * the current class or from a parent class ordered by
@@ -241,7 +251,7 @@ abstract class Interceptor
 		$interceptor = $interceptors[$name] ?? static::class($class);
 
 		// check for a valid interceptor class
-		if ($class !== $interceptor && class_exists($interceptor) === true) {
+		if ($class !== $interceptor && static::isInterceptor($interceptor) === true) {
 			return new $interceptor($object);
 		}
 
@@ -250,7 +260,7 @@ abstract class Interceptor
 		foreach (class_parents($object) as $parent) {
 			$interceptor = static::class($parent);
 
-			if (class_exists($interceptor) === true) {
+			if (static::isInterceptor($interceptor) === true) {
 				return new $interceptor($object);
 			}
 		}
