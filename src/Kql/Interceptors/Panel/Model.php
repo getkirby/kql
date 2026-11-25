@@ -8,6 +8,13 @@ class Model extends Interceptor
 {
 	public const CLASS_ALIAS = 'panel';
 
+	protected $toArray = [
+		'dragText',
+		'image',
+		'path',
+		'url',
+	];
+
 	public function allowedMethods(): array
 	{
 		return [
@@ -18,13 +25,15 @@ class Model extends Interceptor
 		];
 	}
 
-	public function toArray(): array
+	/**
+	 * Only the Panel page and file have a drag text
+	 */
+	protected function dragText(...$args)
 	{
-		return [
-			'dragText' => $this->dragText(),
-			'image'    => $this->image(),
-			'path'     => $this->path(),
-			'url'      => $this->url(),
-		];
+		if (method_exists($this->object, 'dragText') === false) {
+			return null;
+		}
+
+		return $this->object->dragText(...$args);
 	}
 }
