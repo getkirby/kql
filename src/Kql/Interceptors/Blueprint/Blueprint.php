@@ -33,12 +33,12 @@ class Blueprint extends Interceptor
 		];
 	}
 
-	public function fields(): array
+	protected function fields(): array
 	{
 		return $this->object->fields();
 	}
 
-	public function tab(string|null $name = null): array|null
+	protected function tab(string|null $name = null): array|null
 	{
 		$tab = $this->object->tab($name);
 
@@ -57,7 +57,7 @@ class Blueprint extends Interceptor
 		return $props;
 	}
 
-	public function tabs(): array
+	protected function tabs(): array
 	{
 		$tabs = [];
 

@@ -11,7 +11,7 @@ class Content extends Interceptor
 	public function __call($method, array $args = [])
 	{
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		if (method_exists($this->object, $method) === false) {

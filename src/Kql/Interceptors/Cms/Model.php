@@ -11,7 +11,7 @@ abstract class Model extends Interceptor
 	public function __call($method, array $args = [])
 	{
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		if (method_exists($this->object, $method) === false) {
@@ -76,6 +76,7 @@ abstract class Model extends Interceptor
 			'permalink',
 			'previewUrl',
 			'url',
+			'uuid',
 			'version'
 		];
 	}
@@ -107,7 +108,7 @@ abstract class Model extends Interceptor
 		];
 	}
 
-	public function uuid(): string
+	protected function uuid(): string
 	{
 		return $this->object->uuid()->toString();
 	}
