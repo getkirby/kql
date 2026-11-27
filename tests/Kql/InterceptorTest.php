@@ -433,6 +433,18 @@ class InterceptorTest extends TestCase
 		$this->assertInstanceOf('Kirby\Kql\Interceptors\Cms\Page', $result);
 	}
 
+	public function testReplaceInterceptorOptionsSkipsAbstractInterceptor(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['Kirby\Cms\Page' => TestAbstractInterceptor::class]]
+			]
+		]);
+
+		$result = Interceptor::replace(new Page(['slug' => 'test']));
+		$this->assertInstanceOf('Kirby\Kql\Interceptors\Cms\Page', $result);
+	}
+
 	public function testReplaceInterceptorOptionsWithAbstractInterceptor(): void
 	{
 		$this->app->clone([
