@@ -285,6 +285,10 @@ class InterceptorTest extends TestCase
 				'Kirby\Kql\Interceptors\Cms\FileVersion'
 			],
 			[
+				fn () => new Language(['code' => 'en']),
+				'Kirby\Kql\Interceptors\Cms\Language'
+			],
+			[
 				$page,
 				'Kirby\Kql\Interceptors\Cms\Page'
 			],
@@ -444,27 +448,6 @@ class InterceptorTest extends TestCase
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('Access to the class "stdClass" is not supported');
 		Interceptor::replace(new stdClass());
-	}
-
-	public function testReplaceLanguage(): void
-	{
-		// abstract interceptors (here for `Kirby\Cms\Model`)
-		// must not be used as fallback for child classes
-		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('Access to the class "Kirby\Cms\Language" is not supported');
-		Interceptor::replace(new Language(['code' => 'en']));
-	}
-
-	public function testReplaceLanguageAllowedOptions(): void
-	{
-		$this->app->clone([
-			'options' => [
-				'kql' => ['classes' => ['allowed' => ['Kirby\Cms\Language']]]
-			]
-		]);
-
-		$language = new Language(['code' => 'en']);
-		$this->assertSame($language, Interceptor::replace($language));
 	}
 
 	public function testReplaceNonObject(): void
