@@ -72,10 +72,7 @@
 			"@analyze",
 			"@test"
 		],
-		"fix": [
-			"cpx getkirby/php-cs:0.3.0 fix",
-			"composer normalize"
-		],
+		"fix": "cpx getkirby/php-cs:0.3.0 fix",
 		"test": "cpx phpunit/phpunit:12.5.42",
 		"test:coverage": [
 			"@putenv XDEBUG_MODE=coverage",
