@@ -11,7 +11,7 @@ class FileVersion extends File
 	public function __call($method, array $args = [])
 	{
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		// the content field fallback of `Kirby\Cms\FileVersion::__call()`,
