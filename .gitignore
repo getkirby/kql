@@ -10,4 +10,4 @@
 /.php-cs-fixer.cache
 /.phpunit.result.cache
 /tests/coverage
-/tests/*/tmp
+/tests/**/tmp

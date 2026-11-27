@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(FileVersion::class)]
 class FileVersionTest extends TestCase
 {
+	public const TMP = __DIR__ . '/tmp';
+
 	protected function thumb(FileObject|Asset|null $original = null): FileVersion
 	{
 		$original ??= new FileObject([
@@ -29,9 +31,40 @@ class FileVersionTest extends TestCase
 		]));
 	}
 
+	protected function thumbOnDisk(): FileVersion
+	{
+		Dir::make(static::TMP);
+		imagepng(imagecreatetruecolor(20, 10), static::TMP . '/test-20x.png');
+
+		return new FileVersion(new FileVersionObject([
+			'original' => new FileObject([
+				'filename' => 'test.png',
+				'parent'   => new Page(['slug' => 'test']),
+				'content'  => ['template' => 'image']
+			]),
+			'root'     => static::TMP . '/test-20x.png',
+			'url'      => '/media/test-20x.png'
+		]));
+	}
+
+	public function tearDown(): void
+	{
+		Dir::remove(static::TMP);
+	}
+
 	public function testAltReadsOriginalContentField(): void
 	{
 		$this->assertSame('Alt text', $this->thumb()->alt()->value());
+	}
+
+	public function testDimensionsReturnsArray(): void
+	{
+		$this->assertSame([
+			'width'       => 20,
+			'height'      => 10,
+			'ratio'       => 2.0,
+			'orientation' => 'landscape',
+		], $this->thumbOnDisk()->dimensions());
 	}
 
 	public function testRefusesAltWithAssetOriginal(): void
@@ -42,36 +75,20 @@ class FileVersionTest extends TestCase
 
 	public function testToArrayRendersThumb(): void
 	{
-		$root = sys_get_temp_dir() . '/kql-thumb-' . getmypid();
-		Dir::make($root);
-		imagepng(imagecreatetruecolor(20, 10), $root . '/test-20x.png');
+		$thumb = $this->thumbOnDisk();
 
-		$thumb = new FileVersion(new FileVersionObject([
-			'original' => new FileObject([
-				'filename' => 'test.png',
-				'parent'   => new Page(['slug' => 'test']),
-				'content'  => ['template' => 'image']
-			]),
-			'root'     => $root . '/test-20x.png',
-			'url'      => '/media/test-20x.png'
-		]));
-
-		try {
-			$this->assertSame([
-				'extension' => 'png',
-				'filename'  => 'test-20x.png',
-				'height'    => 10,
-				'id'        => 'test/test-20x.png',
-				'mime'      => 'image/png',
-				'niceSize'  => $thumb->niceSize(),
-				'template'  => 'image',
-				'type'      => 'image',
-				'url'       => '/media/test-20x.png',
-				'width'     => 20
-			], $thumb->toArray());
-		} finally {
-			Dir::remove($root);
-		}
+		$this->assertSame([
+			'extension' => 'png',
+			'filename'  => 'test-20x.png',
+			'height'    => 10,
+			'id'        => 'test/test-20x.png',
+			'mime'      => 'image/png',
+			'niceSize'  => $thumb->niceSize(),
+			'template'  => 'image',
+			'type'      => 'image',
+			'url'       => '/media/test-20x.png',
+			'width'     => 20
+		], $thumb->toArray());
 	}
 
 	public function testOriginalReturnsFile(): void
