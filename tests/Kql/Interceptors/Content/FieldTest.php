@@ -2,7 +2,8 @@
 
 namespace Kirby\Kql\Interceptors\Content;
 
-use Kirby\Cms\Field as FieldObject;
+use Kirby\Cms\Blocks;
+use Kirby\Content\Field as FieldObject;
 use Kirby\Exception\PermissionException;
 use Kirby\Kql\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -11,17 +12,32 @@ use PHPUnit\Framework\Attributes\DataProvider;
 #[CoversClass(Field::class)]
 class FieldTest extends TestCase
 {
-	protected array $methods;
-
-	public function setUp(): void
-	{
-		parent::setUp();
-		$this->methods = FieldObject::$methods;
-	}
-
 	public function tearDown(): void
 	{
-		FieldObject::$methods = $this->methods;
+		FieldObject::$methods = [];
+	}
+
+	public static function blockedMethodProvider(): array
+	{
+		return [
+			['getMethod'],
+			['hasMethod'],
+			['kirby'],
+			['model'],
+			['parent'],
+			['toEnum'],
+		];
+	}
+
+	#[DataProvider('blockedMethodProvider')]
+	public function testBlockedMethod(string $method): void
+	{
+		$field = new Field(new FieldObject(null, 'test', 'a'));
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Content\Field::' . $method . '()" is not allowed in the API context');
+
+		$field->$method('test');
 	}
 
 	public static function blockedConfigMethodProvider(): array
@@ -36,55 +52,81 @@ class FieldTest extends TestCase
 	#[DataProvider('blockedConfigMethodProvider')]
 	public function testBlockedMethodWithBlockedConfig(string $method): void
 	{
-		$object = new FieldObject(null, 'test', 'a');
-
 		$this->app->clone([
 			'fieldMethods' => [
 				'shout' => fn (FieldObject $field) => $field
 			],
 			'options' => [
 				'kql' => ['methods' => ['blocked' => [
-					$object::class . '::toPages',
-					$object::class . '::shout'
+					'Kirby\Content\Field::toPages',
+					'Kirby\Content\Field::shout'
 				]]]
 			]
 		]);
 
-		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('The method "' . $object::class . '::' . $method . '()" is not allowed in the API context');
+		$field = new Field(new FieldObject(null, 'test', 'a'));
 
-		(new Field($object))->$method();
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Content\Field::' . $method . '()" is not allowed in the API context');
+
+		$field->$method();
 	}
 
 	public function testBlockedMethodWithBlockedConfigForAlias(): void
 	{
-		$object = new FieldObject(null, 'test', 'a');
-
 		$this->app->clone([
 			'options' => [
-				'kql' => ['methods' => ['blocked' => [$object::class . '::kirbytext']]]
+				'kql' => ['methods' => ['blocked' => ['Kirby\Content\Field::kirbytext']]]
 			]
 		]);
+
+		$field = new Field(new FieldObject(null, 'test', 'a'));
 
 		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('The method "' . $object::class . '::kt()" is not allowed in the API context');
+		$this->expectExceptionMessage('The method "Kirby\Content\Field::kt()" is not allowed in the API context');
 
-		(new Field($object))->kt();
+		$field->kt();
 	}
 
-	public function testCustomMethodWithAliasName(): void
+	public function testCoreMethods(): void
 	{
-		$object = new FieldObject(null, 'test', 'a');
+		$field = new Field(new FieldObject(null, 'test', 'Hello World'));
 
+		$this->assertSame('HELLO WORLD', $field->upper()->value());
+		$this->assertSame('HELLO WORLD', $field->UPPER()->value());
+		$this->assertSame('hello-world', $field->slug()->value());
+		$this->assertSame(2, $field->words());
+		$this->assertInstanceOf(Blocks::class, $field->toBlocks());
+	}
+
+	public function testCustomMethod(): void
+	{
 		$this->app->clone([
 			'fieldMethods' => [
-				'kt' => fn (FieldObject $field) => 'custom'
-			],
-			'options' => [
-				'kql' => ['methods' => ['blocked' => [$object::class . '::kirbytext']]]
+				'shout' => fn (FieldObject $field) => $field->value(strtoupper($field->value) . '!')
 			]
 		]);
 
-		$this->assertSame('custom', (new Field($object))->kt());
+		$field = new Field(new FieldObject(null, 'test', 'hello'));
+		$this->assertSame('HELLO!', $field->shout()->value());
+	}
+
+	public function testFieldMethods(): void
+	{
+		$methods = Field::fieldMethods();
+
+		$this->assertContains('kirbytext', $methods);
+		$this->assertContains('toblocks', $methods);
+		$this->assertContains('upper', $methods);
+		$this->assertNotContains('__call', $methods);
+		$this->assertNotContains('getmethod', $methods);
+		$this->assertNotContains('hasmethod', $methods);
+		$this->assertNotContains('toenum', $methods);
+	}
+
+	public function testToResponse(): void
+	{
+		$field = new Field(new FieldObject(null, 'test', 'hello'));
+		$this->assertSame('hello', $field->toResponse());
 	}
 }

@@ -8,7 +8,7 @@ use Kirby\Exception\PermissionException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use stdClass;
 
-#[CoversClass(\Kirby\Kql\Kql::class)]
+#[CoversClass(Kql::class)]
 class KqlTest extends TestCase
 {
 	public function testFetch(): void
@@ -115,6 +115,20 @@ class KqlTest extends TestCase
 		$this->assertSame(['title' => $expected], $result);
 	}
 
+	public function testRunArrayOfFields(): void
+	{
+		// field objects from `pluck()`
+		$result = Kql::run('site.children.pluck("title")');
+		$this->assertSame(['projects', 'about', 'contact'], $result);
+	}
+
+	public function testRunForbiddenMethod(): void
+	{
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
+		Kql::run('site.children.first.delete');
+	}
+
 	public function testRunInterceptorMethodWithBlockedConfig(): void
 	{
 		$this->app->clone([
@@ -129,6 +143,13 @@ class KqlTest extends TestCase
 		Kql::run('site.children.first.template');
 	}
 
+	public function testRunInvalidQuery(): void
+	{
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('The query must be a string');
+		Kql::run(['query' => false]);
+	}
+
 	public function testRunUuid(): void
 	{
 		$this->app->clone([
@@ -137,26 +158,6 @@ class KqlTest extends TestCase
 
 		$page = new Page(['slug' => 'test', 'content' => ['uuid' => 'abc']]);
 		$this->assertSame('page://abc', Kql::run('page.uuid', $page));
-	}
-
-	public function testRunArrayOfFields(): void
-	{
-		$result = Kql::run('site.children.pluck("title")');
-		$this->assertSame(['projects', 'about', 'contact'], $result);
-	}
-
-	public function testRunInvalidQuery(): void
-	{
-		$this->expectException(Exception::class);
-		$this->expectExceptionMessage('The query must be a string');
-		Kql::run(['query' => false]);
-	}
-
-	public function testRunForbiddenMethod(): void
-	{
-		$this->expectException(PermissionException::class);
-		$this->expectExceptionMessage('The method "Kirby\Cms\Page::delete()" is not allowed in the API context');
-		Kql::run('site.children.first.delete');
 	}
 
 	public function testSelect(): void
@@ -168,17 +169,6 @@ class KqlTest extends TestCase
 		// help
 		$result = Kql::select('foo', '?');
 		$this->assertSame(['type' => 'string', 'value' => 'foo'], $result);
-	}
-
-	public function testSelectWithAlias(): void
-	{
-		$result = Kql::run([
-			'select' => [
-				'myTitle' => 'site.title'
-			]
-		]);
-
-		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
 	public function testSelectFromArray(): void
@@ -226,6 +216,17 @@ class KqlTest extends TestCase
 		]);
 
 		$this->assertSame('/about', $result['test']['url']);
+	}
+
+	public function testSelectWithAlias(): void
+	{
+		$result = Kql::run([
+			'select' => [
+				'myTitle' => 'site.title'
+			]
+		]);
+
+		$this->assertSame(['myTitle' => 'Test Site'], $result);
 	}
 
 	public function testSelectWithBoolean(): void

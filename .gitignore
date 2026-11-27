@@ -11,3 +11,4 @@
 /.phpunit.result.cache
 /tests/coverage
 /tests/*/tmp
+/.phpunit.cache

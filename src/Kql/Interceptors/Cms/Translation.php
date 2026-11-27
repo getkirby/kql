@@ -8,9 +8,10 @@ class Translation extends Interceptor
 {
 	public const CLASS_ALIAS = 'translation';
 
+	// `data` holds every Panel string of the language,
+	// so it is only returned when a query asks for it
 	protected $toArray = [
 		'code',
-		'data',
 		'direction',
 		'id',
 		'name',

@@ -2,11 +2,26 @@
 
 namespace Kirby\Kql\Interceptors\Content;
 
+use Kirby\Cms\HasMethods;
+use Kirby\Content\Field as FieldObject;
+use Kirby\Content\FieldMethods;
 use Kirby\Kql\Interceptor;
+use ReflectionClass;
+use ReflectionMethod;
 
 class Field extends Interceptor
 {
+	/**
+	 * Core field methods that must not be
+	 * called in the API context
+	 */
+	public const BLOCKED_FIELD_METHODS = [
+		'toenum'
+	];
 	public const CLASS_ALIAS = 'field';
+
+	protected static array|null $fieldMethodAliases = null;
+	protected static array|null $fieldMethods = null;
 
 	public function __call($method, array $args = [])
 	{
@@ -20,19 +35,16 @@ class Field extends Interceptor
 			return $this->callMethod($method, $args);
 		}
 
-		// field methods
-		$methods = array_keys($this->object::$methods);
-		$method  = strtolower($method);
-
-		if (in_array($method, $methods) === true) {
+		// core field methods
+		if (in_array(strtolower($method), static::fieldMethods(), true) === true) {
 			return $this->object->$method(...$args);
 		}
 
-		// aliases
-		$aliases = array_keys($this->object::$aliases);
-		$alias   = strtolower($method);
-
-		if (in_array($alias, $aliases) === true) {
+		// custom field methods registered by plugins
+		if (
+			method_exists($this->object, $method) === false &&
+			$this->object->hasMethod(strtolower($method)) === true
+		) {
 			return $this->object->$method(...$args);
 		}
 
@@ -51,12 +63,75 @@ class Field extends Interceptor
 		];
 	}
 
+	/**
+	 * Returns the lowercase names of the core field method
+	 * aliases, which Kirby marks with `@see self::method()`,
+	 * mapped to the method they call
+	 * @internal
+	 */
+	public static function fieldMethodAliases(): array
+	{
+		if (static::$fieldMethodAliases !== null) {
+			return static::$fieldMethodAliases;
+		}
+
+		$aliases = [];
+
+		foreach ((new ReflectionClass(FieldObject::class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			if (
+				str_starts_with($method->getName(), '__') === false &&
+				preg_match('/@see self::(\w+)\(\)/', $method->getDocComment() ?: '', $matches) === 1
+			) {
+				$aliases[strtolower($method->getName())] = strtolower($matches[1]);
+			}
+		}
+
+		return static::$fieldMethodAliases = $aliases;
+	}
+
+	/**
+	 * Returns the lowercase names of all core field methods
+	 * from the `FieldMethods` trait, without the internal
+	 * `HasMethods` helpers and blocked methods
+	 * @internal
+	 */
+	public static function fieldMethods(): array
+	{
+		if (static::$fieldMethods !== null) {
+			return static::$fieldMethods;
+		}
+
+		$helpers = array_map(
+			fn (ReflectionMethod $method) => strtolower($method->getName()),
+			(new ReflectionClass(HasMethods::class))->getMethods()
+		);
+
+		$methods = [];
+
+		foreach ((new ReflectionClass(FieldMethods::class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			$name = strtolower($method->getName());
+
+			if (
+				$method->isStatic() === true ||
+				str_starts_with($name, '__') === true ||
+				in_array($name, $helpers, true) === true ||
+				in_array($name, static::BLOCKED_FIELD_METHODS, true) === true
+			) {
+				continue;
+			}
+
+			$methods[] = $name;
+		}
+
+		return static::$fieldMethods = $methods;
+	}
+
+	/**
+	 * Blocking a core field method also blocks its aliases
+	 */
 	protected function isBlockedMethod(string $method): bool
 	{
-		// a custom field method can take over an alias name
-		$aliasedMethod = isset($this->object::$methods[strtolower($method)]) === false
-			? $this->object::$aliases[strtolower($method)] ?? null
-			: null;
+		$aliasedMethod = static::fieldMethodAliases()[strtolower($method)] ?? null;
 
 		if ($aliasedMethod !== null && parent::isBlockedMethod($aliasedMethod) === true) {
 			return true;

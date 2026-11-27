@@ -12,16 +12,16 @@ class TestObject
 		return [$bar];
 	}
 
-	public function more(): string
-	{
-		return 'no';
-	}
-
 	/**
 	 * @kql-allowed
 	 */
 	public function homer()
 	{
+	}
+
+	public function more(): string
+	{
+		return 'no';
 	}
 }
 

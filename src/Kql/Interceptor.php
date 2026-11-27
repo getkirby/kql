@@ -17,7 +17,6 @@ use Throwable;
  * intercept method calls that are not allowed
  * on the related core class
  *
- * @package   Kirby KQL
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
  * @copyright Bastian Allgeier
@@ -95,7 +94,8 @@ abstract class Interceptor
 	}
 
 	/**
-	 * Returns the class names, nearest first
+	 * Returns the object's class and its parent classes,
+	 * nearest first
 	 */
 	protected static function classNames(object $object): array
 	{
@@ -104,45 +104,12 @@ abstract class Interceptor
 
 	/**
 	 * Throws exception for accessing a restricted method
-	 * @throws \Kirby\Exception\PermissionException
+	 * @throws PermissionException
 	 */
 	protected function forbiddenMethod(string $method)
 	{
 		$name = get_class($this->object) . '::' . $method . '()';
 		throw new PermissionException('The method "' . $name . '" is not allowed in the API context');
-	}
-
-	/**
-	 * Checks if method is allowed to call
-	 */
-	public function isAllowedMethod($method)
-	{
-		// check in the block list from the config
-		if ($this->isBlockedMethod($method) === true) {
-			return false;
-		}
-
-		// check in class allow list
-		if (in_array($method, $this->allowedMethods()) === true) {
-			return true;
-		}
-
-		// check in the allow list from the config
-		if (static::isListed($this->methodNames($method), 'kql.methods.allowed') === true) {
-			return true;
-		}
-
-		// support for model methods with docblock comment
-		if ($this->isAllowedCallable($method) === true) {
-			return true;
-		}
-
-		// support for custom methods with docblock comment
-		if ($this->isAllowedCustomMethod($method) === true) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -192,11 +159,49 @@ abstract class Interceptor
 		return false;
 	}
 
+	/**
+	 * Checks if method is allowed to call
+	 */
+	public function isAllowedMethod($method)
+	{
+		// check in the block list from the config
+		if ($this->isBlockedMethod($method) === true) {
+			return false;
+		}
+
+		// check in class allow list
+		if (in_array($method, $this->allowedMethods()) === true) {
+			return true;
+		}
+
+		// check in the allow list from the config
+		if (static::isListed($this->methodNames($method), 'kql.methods.allowed') === true) {
+			return true;
+		}
+
+		// support for model methods with docblock comment
+		if ($this->isAllowedCallable($method) === true) {
+			return true;
+		}
+
+		// support for custom methods with docblock comment
+		if ($this->isAllowedCustomMethod($method) === true) {
+			return true;
+		}
+
+		return false;
+	}
+
 	protected function isBlockedMethod(string $method): bool
 	{
 		return static::isListed($this->methodNames($method), 'kql.methods.blocked');
 	}
 
+	/**
+	 * Checks if the class exists and can be used as
+	 * interceptor. Abstract interceptors only serve as
+	 * base classes and are never used directly.
+	 */
 	protected static function isInterceptor(string $class): bool
 	{
 		if (is_subclass_of($class, self::class) === false) {
@@ -206,6 +211,9 @@ abstract class Interceptor
 		return (new ReflectionClass($class))->isAbstract() === false;
 	}
 
+	/**
+	 * Checks if a child interceptor defines the method
+	 */
 	protected function isInterceptorMethod(string $method): bool
 	{
 		if (method_exists($this, $method) === false) {
@@ -260,8 +268,8 @@ abstract class Interceptor
 	/**
 	 * Tries to replace a Kirby core object with the
 	 * corresponding interceptor.
-	 * @throws \Kirby\Exception\InvalidArgumentException for non-objects
-	 * @throws \Kirby\Exception\PermissionException when accessing blocked class
+	 * @throws InvalidArgumentException for non-objects
+	 * @throws PermissionException when accessing blocked class
 	 */
 	public static function replace($object)
 	{
@@ -284,7 +292,7 @@ abstract class Interceptor
 			return $object;
 		}
 
-		// 3. Does an interceptor class for $object exist?
+		// 3. Does an interceptor class for $object or a parent class exist?
 		// the nearest class wins, and for each class an interceptor
 		// from the config wins over the built-in one
 		$interceptors = App::instance()->option('kql.interceptors', []);
@@ -304,6 +312,7 @@ abstract class Interceptor
 		}
 
 		// 4. $object has no interceptor but is explicitly allowed?
+		// check in the allow list from the config
 		if (static::isListed($classes, 'kql.classes.allowed') === true) {
 			return $object;
 		}

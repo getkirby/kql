@@ -88,6 +88,8 @@ Given a POST request to: `/api/query`
 
 ## Installation
 
+KQL 4 requires Kirby 6. For Kirby 3, 4 and 5, please use [KQL 3](https://github.com/getkirby/kql/releases/tag/3.0.0).
+
 ### Manual
 
 [Download](https://github.com/getkirby/kql/releases) and copy this repository to `/site/plugins/kql` of your Kirby installation.
@@ -874,7 +876,7 @@ return [
 ];
 ```
 
-The entry also covers subclasses, so `Kirby\Cms\Page::url` is blocked for your page models as well. Core and custom field methods can be blocked the same way, e.g. with `Kirby\Content\Field::toPages` (`Kirby\Cms\Field::toPages` on Kirby 3). Blocking a core field method also blocks its aliases, such as `kt` for `kirbytext`.
+The entry also covers subclasses, so `Kirby\Cms\Page::url` is blocked for your page models as well. Core and custom field methods can be blocked the same way, e.g. with `Kirby\Content\Field::toPages`. Blocking a core field method also blocks its aliases, such as `kt` for `kirbytext`.
 
 ### Blocking Classes
 

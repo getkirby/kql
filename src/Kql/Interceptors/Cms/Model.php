@@ -4,7 +4,7 @@ namespace Kirby\Kql\Interceptors\Cms;
 
 use Kirby\Kql\Interceptor;
 
-class Model extends Interceptor
+abstract class Model extends Interceptor
 {
 	public const CLASS_ALIAS = 'model';
 
@@ -81,6 +81,16 @@ class Model extends Interceptor
 		];
 	}
 
+	protected function allowedMethodsForParents()
+	{
+		return [
+			'parent',
+			'parentId',
+			'parentModel',
+			'site',
+		];
+	}
+
 	protected function allowedMethodsForSiblings()
 	{
 		return [
@@ -95,16 +105,6 @@ class Model extends Interceptor
 			'isFirst',
 			'isLast',
 			'isNth'
-		];
-	}
-
-	protected function allowedMethodsForParents()
-	{
-		return [
-			'parent',
-			'parentId',
-			'parentModel',
-			'site',
 		];
 	}
 
