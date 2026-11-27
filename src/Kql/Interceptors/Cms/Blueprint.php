@@ -36,17 +36,17 @@ class Blueprint extends Interceptor
 		];
 	}
 
-	public function fields(): array
+	protected function fields(): array
 	{
 		return $this->object->fields();
 	}
 
-	public function sections(): array
+	protected function sections(): array
 	{
 		return array_keys($this->object->sections());
 	}
 
-	public function tab(string $name): ?array
+	protected function tab(string $name): ?array
 	{
 		if ($tab = $this->object->tab($name)) {
 			foreach ($tab['columns'] as $columnIndex => $column) {
@@ -59,7 +59,7 @@ class Blueprint extends Interceptor
 		return null;
 	}
 
-	public function tabs(): array
+	protected function tabs(): array
 	{
 		$tabs = [];
 

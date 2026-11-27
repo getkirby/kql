@@ -10,8 +10,14 @@ class Field extends Interceptor
 
 	public function __call($method, array $args = [])
 	{
+		// the block list from the config also covers
+		// core field methods and custom field methods
+		if ($this->isBlockedMethod($method) === true) {
+			$this->forbiddenMethod($method);
+		}
+
 		if ($this->isAllowedMethod($method) === true) {
-			return $this->object->$method(...$args);
+			return $this->callMethod($method, $args);
 		}
 
 		// field methods
@@ -43,6 +49,20 @@ class Field extends Interceptor
 			'or',
 			'value'
 		];
+	}
+
+	protected function isBlockedMethod(string $method): bool
+	{
+		// a custom field method can take over an alias name
+		$aliasedMethod = isset($this->object::$methods[strtolower($method)]) === false
+			? $this->object::$aliases[strtolower($method)] ?? null
+			: null;
+
+		if ($aliasedMethod !== null && parent::isBlockedMethod($aliasedMethod) === true) {
+			return true;
+		}
+
+		return parent::isBlockedMethod($method);
 	}
 
 	public function toResponse()

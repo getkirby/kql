@@ -18,9 +18,12 @@ use Kirby\Cms\User;
 use Kirby\Cms\UserBlueprint;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
+use NewsPage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
+
+require_once __DIR__ . '/fixtures/models.php';
 
 class AppExtended extends App
 {
@@ -55,6 +58,23 @@ class TestInterceptor extends Interceptor
 	}
 }
 
+abstract class TestAbstractInterceptor extends Interceptor
+{
+}
+
+class TestInterceptorWithMethods extends TestInterceptor
+{
+	protected function more(): string
+	{
+		return 'interceptor';
+	}
+
+	private function foo(): string
+	{
+		return 'private';
+	}
+}
+
 
 #[CoversClass(\Kirby\Kql\Interceptor::class)]
 class InterceptorTest extends TestCase
@@ -68,6 +88,22 @@ class InterceptorTest extends TestCase
 		$this->expectException(PermissionException::class);
 		$this->expectExceptionMessage('The method "Kirby\Kql\TestObject::foo()" is not allowed in the API context');
 		$interceptor->foo('test');
+	}
+
+	public function testCallInterceptorMethod(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['allowed' => ['Kirby\Kql\TestObject::foo']]]
+			]
+		]);
+
+		$interceptor = new TestInterceptorWithMethods(new TestObject());
+
+		// protected interceptor methods replace the object's,
+		// private ones stay out of reach
+		$this->assertSame('interceptor', $interceptor->more());
+		$this->assertSame(['hello'], $interceptor->foo());
 	}
 
 	public function testDebugInfo(): void
@@ -125,6 +161,32 @@ class InterceptorTest extends TestCase
 		$object      = new TestObject();
 		$interceptor = new TestInterceptor($object);
 		$this->assertTrue($interceptor->isAllowedMethod('foo'));
+	}
+
+	public function testIsAllowedMethodWithAllowedConfigForParentClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['allowed' => ['Kirby\Kql\TestObject::foo']]]
+			]
+		]);
+
+		$object      = new TestObjectWithMethods();
+		$interceptor = new TestInterceptor($object);
+		$this->assertTrue($interceptor->isAllowedMethod('foo'));
+	}
+
+	public function testIsAllowedMethodWithBlockedConfigForParentClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['blocked' => ['Kirby\Kql\TestObject::more']]]
+			]
+		]);
+
+		$object      = new TestObjectWithMethods();
+		$interceptor = new TestInterceptor($object);
+		$this->assertFalse($interceptor->isAllowedMethod('more'));
 	}
 
 	public function testIsAllowedCallable(): void
@@ -234,6 +296,10 @@ class InterceptorTest extends TestCase
 				'Kirby\Kql\Interceptors\Cms\Page'
 			],
 			[
+				new NewsPage(['slug' => 'test']),
+				'Kirby\Kql\Interceptors\Cms\Page'
+			],
+			[
 				new Role(['name' => 'admin']),
 				'Kirby\Kql\Interceptors\Cms\Role'
 			],
@@ -314,6 +380,67 @@ class InterceptorTest extends TestCase
 
 		$object = new stdClass();
 		$this->assertSame($object, Interceptor::replace($object));
+	}
+
+	public function testReplaceAllowedOptionsForParentClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['classes' => ['allowed' => ['Kirby\Kql\TestObject']]]
+			]
+		]);
+
+		$object = new TestObjectWithMethods();
+		$this->assertSame($object, Interceptor::replace($object));
+	}
+
+	public function testReplaceBlockedOptionsForParentClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['classes' => ['blocked' => ['Kirby\Cms\Page']]]
+			]
+		]);
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('Access to the class "NewsPage" is blocked');
+		Interceptor::replace(new NewsPage(['slug' => 'test']));
+	}
+
+	public function testReplaceInterceptorOptionsForParentClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['Kirby\Cms\Page' => TestInterceptor::class]]
+			]
+		]);
+
+		$this->assertInstanceOf(TestInterceptor::class, Interceptor::replace(new PageExtended(['slug' => 'test'])));
+		$this->assertInstanceOf(TestInterceptor::class, Interceptor::replace(new NewsPage(['slug' => 'test'])));
+	}
+
+	public function testReplaceInterceptorOptionsPrefersNearestClass(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['Kirby\Cms\ModelWithContent' => TestInterceptor::class]]
+			]
+		]);
+
+		$result = Interceptor::replace(new Page(['slug' => 'test']));
+		$this->assertInstanceOf('Kirby\Kql\Interceptors\Cms\Page', $result);
+	}
+
+	public function testReplaceInterceptorOptionsSkipsAbstractInterceptor(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['interceptors' => ['Kirby\Cms\Page' => TestAbstractInterceptor::class]]
+			]
+		]);
+
+		$result = Interceptor::replace(new Page(['slug' => 'test']));
+		$this->assertInstanceOf('Kirby\Kql\Interceptors\Cms\Page', $result);
 	}
 
 	public function testReplaceUnknownObject(): void

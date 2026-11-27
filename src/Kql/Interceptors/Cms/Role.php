@@ -26,7 +26,7 @@ class Role extends Interceptor
 		];
 	}
 
-	public function permissions(): array
+	protected function permissions(): array
 	{
 		return $this->object->permissions()->toArray();
 	}
