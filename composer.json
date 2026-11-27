@@ -67,6 +67,10 @@
 			"cpx getkirby/php-cs:0.3.0 fix",
 			"composer normalize"
 		],
-		"test": "phpunit --stderr --coverage-html=tests/coverage"
+		"test": "cpx phpunit/phpunit:12.5.42",
+		"test:coverage": [
+			"@putenv XDEBUG_MODE=coverage",
+			"@test --coverage-html=tests/coverage"
+		]
 	}
 }
