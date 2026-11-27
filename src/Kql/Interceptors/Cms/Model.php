@@ -108,6 +108,11 @@ abstract class Model extends Interceptor
 		];
 	}
 
+	protected function permissions()
+	{
+		return $this->object->guards()->availability();
+	}
+
 	protected function uuid(): string
 	{
 		return $this->object->uuid()->toString();

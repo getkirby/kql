@@ -44,6 +44,13 @@ class PageTest extends TestCase
 		$this->assertSame('article', $this->page()->intendedTemplate());
 	}
 
+	public function testPermissionsReturnsArray(): void
+	{
+		$this->app->impersonate('kirby');
+
+		$this->assertTrue($this->page()->permissions()['delete']);
+	}
+
 	public function testTemplate(): void
 	{
 		// falls back to the default template, as
