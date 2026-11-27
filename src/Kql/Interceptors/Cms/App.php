@@ -19,7 +19,6 @@ class App extends Interceptor
 			'collection',
 			'defaultLanguage',
 			'detectedLanguage',
-			'draft',
 			'file',
 			'language',
 			'languageCode',

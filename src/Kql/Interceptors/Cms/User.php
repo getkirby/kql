@@ -22,10 +22,8 @@ class User extends Model
 			[
 				'avatar',
 				'email',
-				'id',
 				'isAdmin',
 				'language',
-				'modified',
 				'name',
 				'role',
 				'username',

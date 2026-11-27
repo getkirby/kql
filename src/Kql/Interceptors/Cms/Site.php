@@ -29,7 +29,9 @@ class Site extends Model
 				'homePageId',
 				'page',
 				'pages',
+				'previewUrl',
 				'title',
+				'url',
 			]
 		);
 	}

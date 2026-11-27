@@ -17,7 +17,6 @@ class Pages extends Collection
 				'documents',
 				'drafts',
 				'files',
-				'findByUri',
 				'images',
 				'index',
 				'listed',

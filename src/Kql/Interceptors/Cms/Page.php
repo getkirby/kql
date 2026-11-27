@@ -46,12 +46,16 @@ class Page extends Model
 				'isSortable',
 				'isUnlisted',
 				'num',
+				'parentModel',
+				'permalink',
+				'previewUrl',
 				'slug',
 				'status',
 				'template',
 				'title',
 				'uid',
 				'uri',
+				'url',
 			]
 		);
 	}

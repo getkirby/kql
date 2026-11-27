@@ -46,6 +46,8 @@ class File extends Model
 				'name',
 				'niceSize',
 				'orientation',
+				'permalink',
+				'previewUrl',
 				'ratio',
 				'resize',
 				'size',
@@ -54,6 +56,7 @@ class File extends Model
 				'templateSiblings',
 				'thumb',
 				'type',
+				'url',
 				'width'
 			]
 		);
