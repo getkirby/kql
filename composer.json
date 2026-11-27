@@ -36,10 +36,16 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Kirby\\": [
-				"tests/"
-			]
+			"Kirby\\Kql\\": "src/Kql/"
 		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Kirby\\": "tests/"
+		},
+		"exclude-from-classmap": [
+			"tests/Kql/fixtures/"
+		]
 	},
 	"config": {
 		"allow-plugins": {
@@ -56,7 +62,10 @@
 			"@analyze:composer",
 			"@analyze:psalm"
 		],
-		"analyze:composer": "composer validate --strict --no-check-version --no-check-all",
+		"analyze:composer": [
+			"composer validate --strict --no-check-version --no-check-all",
+			"cpx icanhazstring/composer-unused:0.9.6 --no-progress"
+		],
 		"analyze:psalm": "cpx vimeo/psalm:6.16.1",
 		"ci": [
 			"@fix",
