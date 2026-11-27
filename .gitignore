@@ -1,14 +1,13 @@
-# OS files
+# os
 .DS_Store
 
-# Vendor files
-/node_modules
-/vendor
-
-# Cache and temporary files
-/.cache
+# cs fixer
 /.php-cs-fixer.cache
-/.phpunit.result.cache
-/tests/coverage
-/tests/*/tmp
+
+# tests
 /.phpunit.cache
+/tests/coverage
+/tests/**/tmp
+
+# dependencies
+/vendor
