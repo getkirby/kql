@@ -9,7 +9,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        php: ["8.2", "8.3", "8.4"]
+        php: ["8.2", "8.3", "8.4", "8.5"]
     env:
       extensions: mbstring, pcov
       ini: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
@@ -73,7 +73,7 @@ jobs:
         run: phpunit --coverage-clover ${{ github.workspace }}/clover.xml
 
       - name: Statically analyze using Psalm
-        if: always() && steps.finishPrepare.outcome == 'success' && matrix.php != '8.4'
+        if: always() && steps.finishPrepare.outcome == 'success' && matrix.php != '8.4' && matrix.php != '8.5'
         run: psalm --output-format=github --php-version=${{ matrix.php }}
 
   analysis:
