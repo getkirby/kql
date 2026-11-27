@@ -51,6 +51,19 @@ class PageTest extends TestCase
 		$this->assertSame('default', $this->page()->template());
 	}
 
+	public function testTemplateWithBlockedConfig(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['blocked' => ['Kirby\Cms\Page::template']]]
+			]
+		]);
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Cms\Page::template()" is not allowed in the API context');
+		$this->page()->template();
+	}
+
 	public function testToArray(): void
 	{
 		$result = $this->page()->toArray();
@@ -60,5 +73,19 @@ class PageTest extends TestCase
 		$this->assertSame('default', $result['template']);
 		$this->assertSame('Test', $result['title']);
 		$this->assertSame(['title' => 'Test', 'text' => 'Hello'], $result['content']);
+	}
+
+	public function testUuid(): void
+	{
+		$this->app->clone([
+			'options' => ['cache' => ['uuid' => false]]
+		]);
+
+		$page = new Page(new PageObject([
+			'slug'    => 'test',
+			'content' => ['uuid' => 'abc']
+		]));
+
+		$this->assertSame('page://abc', $page->uuid());
 	}
 }

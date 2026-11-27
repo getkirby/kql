@@ -40,6 +40,54 @@ class FieldTest extends TestCase
 		$field->$method('test');
 	}
 
+	public static function blockedConfigMethodProvider(): array
+	{
+		return [
+			['toPages'],
+			['TOPAGES'],
+			['shout'],
+		];
+	}
+
+	#[DataProvider('blockedConfigMethodProvider')]
+	public function testBlockedMethodWithBlockedConfig(string $method): void
+	{
+		$this->app->clone([
+			'fieldMethods' => [
+				'shout' => fn (FieldObject $field) => $field
+			],
+			'options' => [
+				'kql' => ['methods' => ['blocked' => [
+					'Kirby\Content\Field::toPages',
+					'Kirby\Content\Field::shout'
+				]]]
+			]
+		]);
+
+		$field = new Field(new FieldObject(null, 'test', 'a'));
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Content\Field::' . $method . '()" is not allowed in the API context');
+
+		$field->$method();
+	}
+
+	public function testBlockedMethodWithBlockedConfigForAlias(): void
+	{
+		$this->app->clone([
+			'options' => [
+				'kql' => ['methods' => ['blocked' => ['Kirby\Content\Field::kirbytext']]]
+			]
+		]);
+
+		$field = new Field(new FieldObject(null, 'test', 'a'));
+
+		$this->expectException(PermissionException::class);
+		$this->expectExceptionMessage('The method "Kirby\Content\Field::kt()" is not allowed in the API context');
+
+		$field->kt();
+	}
+
 	public function testCoreMethods(): void
 	{
 		$field = new Field(new FieldObject(null, 'test', 'Hello World'));

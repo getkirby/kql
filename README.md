@@ -826,6 +826,8 @@ return [
 ];
 ```
 
+The entry also covers subclasses.
+
 #### DocBlock Comment
 
 You can also add a comment to your methods' doc blocks to allow them:
@@ -874,6 +876,8 @@ return [
 ];
 ```
 
+The entry also covers subclasses, so `Kirby\Cms\Page::url` is blocked for your page models as well. Core and custom field methods can be blocked the same way, e.g. with `Kirby\Content\Field::toPages`. Blocking a core field method also blocks its aliases, such as `kt` for `kirbytext`.
+
 ### Blocking Classes
 
 Sometimes you might want to reduce access to various parts of the system. This can be done by blocking individual methods (see above) or by blocking entire classes.
@@ -890,7 +894,7 @@ return [
 ];
 ```
 
-Now, access to any user is blocked.
+Now, access to any user is blocked, including users with a custom user model.
 
 ### Custom Classes and Interceptors
 
@@ -905,6 +909,8 @@ return [
   ]
 ];
 ```
+
+An interceptor also applies to subclasses of its class, so an interceptor for `Kirby\Cms\Page` covers your page models. If several classes in the inheritance chain have an interceptor, the one for the nearest class wins.
 
 You can put the class for such a custom interceptor in a plugin for example.
 
@@ -935,14 +941,22 @@ class SystemInterceptor extends Kirby\Kql\Interceptors\Interceptor
 {
   ...
 
-  public function isReady()
+  public function allowedMethods(): array
+  {
+    return [
+      'isInstallable',
+      'isReady',
+    ];
+  }
+
+  protected function isReady()
   {
     return 'yes it is!';
   }
 }
 ```
 
-This custom method can now be used with `kirby.system.isReady` in KQL and will return `yes it is!`
+This custom method can now be used with `kirby.system.isReady` in KQL and will return `yes it is!`. Keep such methods protected and list them in `allowedMethods()`, so `Kirby\Cms\System::isReady` in `kql.methods.blocked` can still block it.
 
 ### Unintercepted Classes
 
@@ -960,7 +974,7 @@ return [
 ];
 ```
 
-This will introduce full access to all public class methods. This can be very risky though and you should avoid this if possible.
+This will introduce full access to all public class methods, for the class and its subclasses, unless an interceptor applies. This can be very risky though and you should avoid this if possible.
 
 ### No Mutations
 
