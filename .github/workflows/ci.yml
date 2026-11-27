@@ -1,197 +1,26 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  # long-lived branches only, so a pull request doesn't run twice
+  push:
+    branches: [main, v6]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  tests:
-    name: PHP ${{ matrix.php }}
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    strategy:
-      matrix:
-        php: ["8.3", "8.4", "8.5"]
-    env:
-      extensions: mbstring, pcov
-      ini: pcov.directory=., "pcov.exclude=\"~(vendor|tests)~\""
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
-
-      - name: Setup PHP cache environment
-        id: ext-cache
-        uses: shivammathur/cache-extensions@270463ea3e30925f5661b16e508feab532dbf309 # v1
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          key: php-v1
-
-      - name: Cache PHP extensions
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ${{ steps.ext-cache.outputs.dir }}
-          key: ${{ steps.ext-cache.outputs.key }}
-          restore-keys: ${{ steps.ext-cache.outputs.key }}
-
-      - name: Setup PHP environment
-        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          ini-values: ${{ env.ini }}
-          coverage: pcov
-          tools: phpunit:12.4.4, psalm:5.20.0
-
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-      - name: Get Composer cache directory
-        id: composerCache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ${{ steps.composerCache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        run: composer install --prefer-dist
-
-      - name: Cache analysis data
-        id: finishPrepare
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ~/.cache/psalm
-          key: backend-analysis-${{ matrix.php }}-v2
-
-      - name: Run tests
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: phpunit --coverage-clover ${{ github.workspace }}/clover.xml
-
-      - name: Statically analyze using Psalm
-        if: always() && steps.finishPrepare.outcome == 'success' && matrix.php == '8.3'
-        run: psalm --output-format=github --php-version=${{ matrix.php }}
-
-  analysis:
-    name: Analysis
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      php: "8.3"
-      extensions: mbstring
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
-
-      - name: Setup PHP cache environment
-        id: ext-cache
-        uses: shivammathur/cache-extensions@270463ea3e30925f5661b16e508feab532dbf309 # v1
-        with:
-          php-version: ${{ env.php }}
-          extensions: ${{ env.extensions }}
-          key: php-v1
-
-      - name: Cache PHP extensions
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ${{ steps.ext-cache.outputs.dir }}
-          key: ${{ steps.ext-cache.outputs.key }}
-          restore-keys: ${{ steps.ext-cache.outputs.key }}
-
-      - name: Setup PHP environment
-        id: finishPrepare
-        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2
-        with:
-          php-version: ${{ env.php }}
-          extensions: ${{ env.extensions }}
-          coverage: none
-          tools: |
-            composer:2.4.4, composer-normalize:2.28.3, composer-require-checker:4.1.0,
-            composer-unused:0.7.12, phpmd:2.13.0
-
-      - name: Validate composer.json/composer.lock
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: composer validate --strict --no-check-version --no-check-all
-
-      - name: Ensure that composer.json is normalized
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: composer-normalize --dry-run
-
-      - name: Get Composer cache directory
-        id: composerCache1
-        if: always() && steps.finishPrepare.outcome == 'success'
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        id: composerCache2
-        if: always() && steps.composerCache1.outcome == 'success'
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ${{ steps.composerCache1.outputs.dir }}
-          key: ${{ runner.os }}-composer-locked-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-locked-
-
-      - name: Install dependencies
-        id: composerInstall
-        if: always() && steps.composerCache2.outcome == 'success'
-        run: composer install --prefer-dist
-
-      - name: Check for unused Composer dependencies
-        if: always() && steps.composerInstall.outcome == 'success'
-        run: composer-unused --no-progress
-
-      - name: Statically analyze using PHPMD
-        if: always() && steps.composerInstall.outcome == 'success'
-        run: phpmd . github phpmd.xml.dist --exclude 'tests/*,vendor/*'
-
-  coding-style:
-    name: Coding Style
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
-
-      - name: Setup PHP environment
-        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2
-        with:
-          php-version: "8.4"
-          coverage: none
-
-      - name: Install cpx
-        run: |
-          composer global require cpx/cpx
-          composer global config bin-dir --absolute --quiet >> "$GITHUB_PATH"
-
-      - name: Cache analysis data
-        id: finishPrepare
-        uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        with:
-          path: ~/.php-cs-fixer
-          key: coding-style
-
-      - name: Check for PHP coding style violations
-        if: always() && steps.finishPrepare.outcome == 'success'
-        env:
-          PHP_CS_FIXER_IGNORE_ENV: 1
-        # Use the --dry-run flag in push builds to get a failed CI status
-        run: >
-          cpx getkirby/php-cs:^0.2 fix --diff
-          ${{ github.event_name != 'pull_request' && '--dry-run' || '' }}
-
-      - name: Create code suggestions from the coding style changes (on PR only)
-        if: >
-          always() && steps.finishPrepare.outcome == 'success' &&
-          github.event_name == 'pull_request'
-        uses: reviewdog/action-suggester@4747dbc9f9e37adba0943e681cc20db466642158 # v1
-        with:
-          tool_name: PHP-CS-Fixer
-          fail_on_error: "true"
+  php:
+    uses: getkirby/actions/.github/workflows/php.yml@e27f4dff8102d3f51e08f0608f27decf59a90ce8 # 0.3.1
+    with:
+      composer-normalize: true
+      extensions: gd, mbstring
+      suggestions: true
+    permissions:
+      contents: read
+      # for the code style suggestions on pull requests
+      pull-requests: write

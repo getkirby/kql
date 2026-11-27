@@ -64,7 +64,6 @@ class TestInterceptor extends Interceptor
 	}
 }
 
-
 class TestInterceptorWithMethods extends TestInterceptor
 {
 	private function foo(): string

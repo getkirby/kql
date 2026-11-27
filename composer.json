@@ -30,16 +30,22 @@
 		"source": "https://github.com/getkirby/kql"
 	},
 	"require": {
-		"php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+		"php": "~8.3.0 || ~8.4.0 || ~8.5.0 || ~8.6.0",
 		"getkirby/cms": "^6.0",
 		"getkirby/composer-installer": "^1.2.1"
 	},
 	"autoload": {
 		"psr-4": {
-			"Kirby\\": [
-				"tests/"
-			]
+			"Kirby\\Kql\\": "src/Kql/"
 		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Kirby\\": "tests/"
+		},
+		"exclude-from-classmap": [
+			"tests/Kql/fixtures/"
+		]
 	},
 	"config": {
 		"allow-plugins": {
@@ -54,21 +60,23 @@
 	"scripts": {
 		"analyze": [
 			"@analyze:composer",
-			"@analyze:psalm",
-			"@analyze:phpmd"
+			"@analyze:psalm"
 		],
-		"analyze:composer": "composer validate --strict --no-check-version --no-check-all",
-		"analyze:phpmd": "phpmd . ansi phpmd.xml.dist --exclude 'dependencies/*,tests/*,vendor/*'",
-		"analyze:psalm": "psalm",
+		"analyze:composer": [
+			"composer validate --strict --no-check-version --no-check-all",
+			"cpx icanhazstring/composer-unused:0.9.6 --no-progress"
+		],
+		"analyze:psalm": "cpx vimeo/psalm:6.16.1",
 		"ci": [
 			"@fix",
 			"@analyze",
 			"@test"
 		],
-		"fix": [
-			"cpx getkirby/php-cs:^0.2 fix",
-			"composer normalize"
-		],
-		"test": "phpunit --stderr --coverage-html=tests/coverage"
+		"fix": "cpx getkirby/php-cs:0.3.0 fix",
+		"test": "cpx phpunit/phpunit:12.5.42",
+		"test:coverage": [
+			"@putenv XDEBUG_MODE=coverage",
+			"@test --coverage-html=tests/coverage"
+		]
 	}
 }

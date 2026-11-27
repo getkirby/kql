@@ -1,12 +1,29 @@
 <?xml version="1.0"?>
 <psalm
-	errorLevel="7"
+	errorLevel="4"
+	findUnusedPsalmSuppress="true"
 	resolveFromConfigFile="true"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="https://getpsalm.org/schema/config"
 	xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
+	<issueHandlers>
+		<!-- Don't warn about missing override attributes - Kirby does not use them so far -->
+		<MissingOverrideAttribute errorLevel="suppress" />
+
+		<!-- Don't warn about unused code as Psalm does not know whether code will be used by queries or custom interceptors -->
+		<PossiblyUnusedMethod errorLevel="suppress" />
+		<PossiblyUnusedParam errorLevel="suppress" />
+		<PossiblyUnusedProperty errorLevel="suppress" />
+		<PossiblyUnusedReturnValue errorLevel="suppress" />
+		<UnusedClass errorLevel="suppress" />
+
+		<!-- Don't warn about undefined magic methods as interceptors pass their calls on through __call, which Psalm cannot follow statically -->
+		<UndefinedMagicMethod errorLevel="suppress" />
+	</issueHandlers>
+
 	<projectFiles>
+		<directory name="extensions" />
 		<directory name="src" />
 		<file name="index.php" />
 		<ignoreFiles>

@@ -154,8 +154,7 @@ class Kql
 			}
 
 			if (is_int($key) === true) {
-				$key       = $selection;
-				$selection = true;
+				$key = $selection;
 			}
 
 			$result[$key] = static::render($array[$key] ?? null);
